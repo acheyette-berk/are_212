@@ -1,6 +1,6 @@
 ---
 title: "are212_ps2"
-author: "Eleanor Adachi"
+author: "Eleanor Adachi/Karla Neri/Anne Cheyette"
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
