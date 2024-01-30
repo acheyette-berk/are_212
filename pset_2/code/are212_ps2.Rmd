@@ -11,18 +11,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Problem Set 2
 
-```{r code}
+```{r set up}
 # Comment out after installing
 # install.packages("pacman")
 
 # Load packages
 library(pacman)
-p_load(dplyr, haven, readr, knitr, psych, ggplot2,stats4, stargazer, lmSupport, magrittr, qwraps2, Jmisc)
+p_load(tidyverse, haven, readr, knitr, psych, ggplot2,stats4, stargazer,
+       magrittr, qwraps2, Jmisc)
 
 # get directory of current file
 current_directory <-
   dirname(dirname(rstudioapi::getSourceEditorContext()$path))
+```
 
+```{r describe data}
 #### 1 ####
 
 # Load data
@@ -32,7 +35,9 @@ head(my_data)
 # Create new variables
 my_data <- 
   mutate(my_data, 
-         logprice=log(price), logqu=log(qu), carspc=qu/pop)
+         logprice=log(price), 
+         logqu=log(qu), 
+         carspc=qu/pop)
 
 #### 2 ####
 
@@ -59,12 +64,18 @@ summary_maker <-
               "mean (sd)" = ~ qwraps2::mean_sd(my_data$logqu)))
 whole <- summary_table(my_data, summary_maker)
 whole
+```
 
+```{r histogram of qu}
 #### 3 ####
 
 # Make a histogram of qu
 histqu <- ggplot(my_data, aes(x=qu)) + geom_histogram(bins=15)
 (histqu <- histqu + xlab("Quantity") + ylab("Number of Observations") + ggtitle("Histogram of Quantity"))
+
+```
+
+```{r histogram of cars pc}
 
 #### 4 ####
 
@@ -72,6 +83,9 @@ histqu <- ggplot(my_data, aes(x=qu)) + geom_histogram(bins=15)
 histcarspcvertical <- hist(my_data$carspc, main="Histogram of Cars per Capita", xlab="Cars per Capita")
 abline(v=0.002, col="blue", lwd=3)
 histcarspcvertical
+```
+
+```{r scatter plot}
 
 #### 5 ####
 
@@ -81,6 +95,9 @@ scatter <- ggplot(my_data, aes(x=price, y=qu)) + geom_point()
 scatter_logs <- ggplot(my_data, aes(x=logprice, y=logqu)) + geom_point()
 (scatter_logs <- scatter_logs + xlab("Log of Price") + ylab("Log of Quantity") + ggtitle("Scatter Plot of Log of Quantity vs. Log of Price"))
 
+```
+
+```{r histogram of luxury vs no luxury}
 #### 6 ####
 
 # Filter data by luxury
@@ -95,10 +112,16 @@ histprice_luxnolux <- ggplot() +
                     labels=c("r"="Luxury Models", "g"="Non-Luxury Models"))
 histprice_luxnolux
 
+```
+
+```{r export data}
 #### 7 ####
 
 # Export data
 write.csv(my_data, file="my_data2024.csv")
+```
+
+```{r regressions}
 
 #### 8 ####
 
@@ -169,14 +192,19 @@ summary(Reg2)
 # TODO how explain findings?? ####
 # why Rsquared so different???
 
+```
+
+
+- sample size, n = 57
+- number of explanatory variables, k = 1
+- degrees of freedom, n - k = 56
+- estimate of coefficient, b = 591.1
+```{r regression quantity on price}
 #### 9 ####
 
 # regression of quantity on price
 # get degrees of freedom, coefficient, and sample size
-print("sample size, n = 57")
-print("number of explanatory variables, k = 1")
-print("degrees of freedom, n - k = 56")
-print("estimate of coefficient, b = 591.1")
+
 # project estimates of y
 y1_hat <- P%*%y1
 # calculate residuals
@@ -187,17 +215,21 @@ plot(x = y1, # True values on x-axis
      y = y1_hat, # fitted values on y-axis
      xlab = "True Values",
      ylab = "Model Fitted Values",
-     main = "Fitted vs. true values for regression of quantity on price (no constant)")
+     main = str_wrap("Fitted vs. true values for regression of quantity on price (no constant)", 40))
 
 # plot residuals vs. true (observed) quantities
 plot(x = y1, # True values on x-axis
      y = e, # residuals on y-axis
      xlab = "True Values",
      ylab = "Residuals",
-     main = "Residuals vs. true values for regression of quantity on price (no constant)")
+     main = str_wrap("Residuals vs. true values for regression of quantity on price (no constant)", 40))
 
-print("There appears to be a positive linear relationship between the quantity and the residual.")
+```
 
+There appears to be a positive linear relationship between the quantity and the residual.
+
+
+```{r regression with constant}
 #### 10 ####
 
 # Regress quantity on price and a constant
@@ -231,31 +263,45 @@ Rsquared
 # project estimates of y
 y10_hat <- P%*%y10
 y10_hat <- X10%*%b10
+```
 
+
+```{r compare with lm model}
 # check with lm model
 Reg10 <- lm(qu~price,my_data)
 summary(Reg10)
 
+```
+
+```{r plot fitted vs true}
 # plot fitted (predicted) vs. true (observed) quantities
 plot(x = y10, # True values on x-axis
      y = y10_hat, # fitted values on y-axis
      xlab = "True Values",
      ylab = "Model Fitted Values",
-     main = "Fitted vs. true values for regression of quantity on price with constant")
+     main = 
+       str_wrap("Fitted vs. true values for regression of quantity on price with constant", 40))
 
+```
+
+```{r plot residuals vs observed}
 # plot residuals vs. true (observed) quantities
 plot(x = y10, # True values on x-axis
      y = e10, # residuals on y-axis
      xlab = "True Values",
      ylab = "Residuals",
-     main = "Residuals vs. true values for regression of quantity on price with constant")
+     main = str_wrap("Residuals vs. true values for regression of quantity on price with constant", 40))
 
 # What do you see in terms of fit and whether constant variance assumption for residuals is valid?
 # Has the fit improved or not relative to the question 8 analysis?
 # TODO constant variance assumption valid??? ####
-print("Rsquared has improved; was negative, now is between 0 and 1")
-print("However, residuals still have a positive linear relationship with quantity")
+```
 
+Rsquared has improved; was negative, now is between 0 and 1. 
+
+However, residuals still have a positive linear relationship with quantity.
+
+```{r}
 #### 11 ####
 
 # Demean quantity
@@ -297,13 +343,16 @@ y11_hat <- x11%*%b11
 Reg11 <- lm(dmeanqu~dmeanprice,my_data)
 summary(Reg11)
 
-# Compare to analysis in question 10.
-# Why do you get this? Explain the theorem behind this briefly.
-print("We get the same coefficient for qu in 10 and dmeanqu in 11.")
-print("We also get the same Rsquared for 10 and 11.")
-# TODO explain why equivalent (theorem??) ####
+```
 
 
+Compare to analysis in question 10.
+Why do you get this? Explain the theorem behind this briefly.
+We get the same coefficient for qu in 10 and dmeanqu in 11.
+We also get the same Rsquared for 10 and 11.
+*TODO explain why equivalent (theorem??)* 
+
+```{r}
 #### 12 ####
 
 # Regress quantity on a constant, price, luxury indicator, weight, and fuel efficiency
@@ -340,7 +389,7 @@ plot(x = y12, # True values on x-axis
      y = y12_hat, # fitted values on y-axis
      xlab = "True Values",
      ylab = "Model Fitted Values",
-     main = "Fitted vs. true values for multivariate linear regression of quantity")
+     main = str_wrap("Fitted vs. true values for multivariate linear regression of quantity", 40))
 
 # TODO what do you see in terms of fit? ####
 
@@ -349,11 +398,14 @@ plot(x = my_data$fuel, # fuel efficiency on x-axis
      y = e12, # residuals on y-axis
      xlab = "Fuel Efficiency (liter per km)",
      ylab = "Residuals",
-     main = "Residuals vs. fuel efficiency from multivariate linear regression of quantity")
+     main = str_wrap("Residuals vs. fuel efficiency from multivariate linear regression of quantity", 40))
 
 # TODO is the constant variance assumption for the residuals valid or not? ####
+```
 
 
+
+```{r}
 #### 13 ####
 
 # Regress quantity on a constant, price, weight, and luxury indicator
@@ -398,14 +450,18 @@ SST
 # calculate R squared
 Rsquared <- 1-(SSR/SST)
 Rsquared
+```
 
-# Report your findings
-# We wanted to get  effect of fuel consumption on quantity, all else constant.
-# To which coefficient of a previous question is the coefficient of fuelres equal to, and why?
-print("b13 is equal to the coefficient of fuel efficiency in the regression of qu on on a constant, price, luxury indicator, weight, and fuel efficiency.")
-print("It is equal because regressing qu and fuel on the other factors and then regressing the residuals is equivalent to finding the coefficient in a multivariate linear regression.")
-# TODO theoretical reason why coefficients equal?? ####
 
+*Report your findings*
+*We wanted to get  effect of fuel consumption on quantity, all else constant.*
+*To which coefficient of a previous question is the coefficient of fuelres equal to, and why?*
+b13 is equal to the coefficient of fuel efficiency in the regression of qu on on a constant, price, luxury indicator, weight, and fuel efficiency.
+It is equal because regressing qu and fuel on the other factors and then regressing the residuals is equivalent to finding the coefficient in a multivariate linear regression.
+*TODO theoretical reason why coefficients equal??*
+
+
+```{r}
 #### 14 ####
 
 # Repeat regression 12 but now use logqu and logprice and the other variables.
@@ -441,14 +497,18 @@ plot(x = my_data$logprice, # logprice
      y = y14_hat, # fitted logqu values on y-axis
      xlab = "Log of Price",
      ylab = "Log of Quantity (Predicted)",
-     main = "Log of Quantity (Predicted) vs. Log of Price from Regression in Logs")
+     main = str_wrap("Log of Quantity (Predicted) vs. Log of Price from Regression in Logs", 40))
 
-# Call this the Regression in logs.
-# Is the estimated car demand elastic with respect to price?
-print("Yes, demand is elastic with respect to price because the absolute value of the coefficient is greater than 1.")
-print("A 100% increase in price leads to a >400% decrease in demand.")
+```
 
 
+
+*Call this the Regression in logs.*
+*Is the estimated car demand elastic with respect to price?*
+Yes, demand is elastic with respect to price because the absolute value of the coefficient is greater than 1.
+A 100% increase in price leads to a >400% decrease in demand.
+
+```{r}
 #### 15 ####
 
 # Set seed equal to 12345.
@@ -486,8 +546,8 @@ y = x + e
 X10000 <- cbind(1, x)
 b10000 <- solve(t(X10000)%*%X10000)%*%t(X10000)%*%y
 b10000
-
-# What do you see as you increase the sample?
-print("As the sample size increases, beta0 approaches 0 and beta1 approaches 1.")
-
 ```
+
+*What do you see as you increase the sample?*
+As the sample size increases, beta0 approaches 0 and beta1 approaches 1.
+
