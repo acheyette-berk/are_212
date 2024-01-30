@@ -1,0 +1,34 @@
+---
+title: "Problem Set 2 - ARE 212"
+output: pdf_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r set up}
+library(pacman)
+p_load(tidyverse, haven, knitr, psych, stats4, stargazer,
+       magrittr, qwraps2, Jmisc)
+
+# get directory of current file
+current_directory <- 
+  dirname(dirname(rstudioapi::getSourceEditorContext()$path))
+
+# read in data
+mydata <- read_dta(file.path(current_directory, "data",
+                             "pset2_2024.dta"))
+
+```
+
+```{r manipulate and summarize data}
+# Create three new variables: log price in euros, 
+# log of quantity (log(qu)), and number of registered
+# cars per capita (carspc= qu/population)
+mydata <- 
+  mydata %>% 
+  mutate(log_price = log(price), # price is in 1000 euro, need to change?
+         log_qu = log(qu),
+     
