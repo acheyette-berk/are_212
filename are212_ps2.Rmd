@@ -19,17 +19,20 @@ knitr::opts_chunk$set(echo = TRUE)
 library(pacman)
 p_load(dplyr, haven, readr, knitr, psych, ggplot2,stats4, stargazer, lmSupport, magrittr, qwraps2, Jmisc)
 
-# Set working directory
-setwd("C:/Users/elean/Documents/ARE212/ProblemSet2")
+# get directory of current file
+current_directory <-
+  dirname(dirname(rstudioapi::getSourceEditorContext()$path))
 
 #### 1 ####
 
 # Load data
-my_data <- read_dta("pset2_2024.dta")
+my_data <- read_dta(file.path(current_directory, "data", "pset2_2024.dta"))
 head(my_data)
 
 # Create new variables
-my_data <- mutate(my_data, logprice=log(price), logqu=log(qu), carspc=qu/pop)
+my_data <- 
+  mutate(my_data, 
+         logprice=log(price), logqu=log(qu), carspc=qu/pop)
 
 #### 2 ####
 
