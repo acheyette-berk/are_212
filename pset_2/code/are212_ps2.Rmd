@@ -25,9 +25,9 @@ current_directory <-
   dirname(dirname(rstudioapi::getSourceEditorContext()$path))
 ```
 
-```{r describe data}
-#### 1 ####
+# Question 1
 
+```{r load data}
 # Load data
 my_data <- read_dta(file.path(current_directory, "data", "pset2_2024.dta"))
 head(my_data)
@@ -38,9 +38,11 @@ my_data <-
          logprice=log(price), 
          logqu=log(qu), 
          carspc=qu/pop)
+```
 
-#### 2 ####
+# Question 2
 
+```{r describe data}
 # Get summary statistics for data
 describe(my_data)
 
@@ -66,29 +68,27 @@ whole <- summary_table(my_data, summary_maker)
 whole
 ```
 
-```{r histogram of qu}
-#### 3 ####
+# Question 3
 
+```{r histogram of qu}
 # Make a histogram of qu
 histqu <- ggplot(my_data, aes(x=qu)) + geom_histogram(bins=15)
 (histqu <- histqu + xlab("Quantity") + ylab("Number of Observations") + ggtitle("Histogram of Quantity"))
 
 ```
 
+# Question 4
+
 ```{r histogram of cars pc}
-
-#### 4 ####
-
 # Make a histogram of carspc
 histcarspcvertical <- hist(my_data$carspc, main="Histogram of Cars per Capita", xlab="Cars per Capita")
 abline(v=0.002, col="blue", lwd=3)
 histcarspcvertical
 ```
 
+# Question 5
+
 ```{r scatter plot}
-
-#### 5 ####
-
 # Make scatter plots of price vs. qu and logprice vs. logqu
 scatter <- ggplot(my_data, aes(x=price, y=qu)) + geom_point()
 (scatter <- scatter + xlab("Price") + ylab("Quantity") + ggtitle("Scatter Plot of Quantity vs. Price"))
@@ -97,9 +97,8 @@ scatter_logs <- ggplot(my_data, aes(x=logprice, y=logqu)) + geom_point()
 
 ```
 
+# Question 6
 ```{r histogram of luxury vs no luxury}
-#### 6 ####
-
 # Filter data by luxury
 dataluxury <- filter(my_data, luxury==1)
 datanoluxury <- filter(my_data, luxury==0)
@@ -114,17 +113,17 @@ histprice_luxnolux
 
 ```
 
-```{r export data}
-#### 7 ####
 
+# Question 7
+
+```{r export data}
 # Export data
 write.csv(my_data, file="my_data2024.csv")
 ```
 
+# Question 8
+
 ```{r regressions}
-
-#### 8 ####
-
 # Regress qu on price without constant
 x <- my_data$price
 y1 <- my_data$qu
@@ -195,13 +194,13 @@ summary(Reg2)
 ```
 
 
+# Question 9
+
 - sample size, n = 57
 - number of explanatory variables, k = 1
 - degrees of freedom, n - k = 56
 - estimate of coefficient, b = 591.1
 ```{r regression quantity on price}
-#### 9 ####
-
 # regression of quantity on price
 # get degrees of freedom, coefficient, and sample size
 
@@ -228,10 +227,9 @@ plot(x = y1, # True values on x-axis
 
 There appears to be a positive linear relationship between the quantity and the residual.
 
+# Question 
 
 ```{r regression with constant}
-#### 10 ####
-
 # Regress quantity on price and a constant
 # add constant
 X10 <- cbind(1, x)
@@ -264,7 +262,6 @@ Rsquared
 y10_hat <- P%*%y10
 y10_hat <- X10%*%b10
 ```
-
 
 ```{r compare with lm model}
 # check with lm model
@@ -301,9 +298,9 @@ Rsquared has improved; was negative, now is between 0 and 1.
 
 However, residuals still have a positive linear relationship with quantity.
 
-```{r}
-#### 11 ####
+# Question 11
 
+```{r demeaned regression}
 # Demean quantity
 my_data$dmeanqu <- M0%*%my_data$qu
 
@@ -352,9 +349,9 @@ We get the same coefficient for qu in 10 and dmeanqu in 11.
 We also get the same Rsquared for 10 and 11.
 *TODO explain why equivalent (theorem??)* 
 
-```{r}
-#### 12 ####
+# Question 12
 
+```{r multivariate linear regression}
 # Regress quantity on a constant, price, luxury indicator, weight, and fuel efficiency
 # add constant
 X12 <- cbind(1, my_data$price, my_data$luxury, my_data$weight, my_data$fuel)
@@ -404,10 +401,9 @@ plot(x = my_data$fuel, # fuel efficiency on x-axis
 ```
 
 
+# Question 13
 
-```{r}
-#### 13 ####
-
+```{r regress residuals}
 # Regress quantity on a constant, price, weight, and luxury indicator
 X13 <- cbind(1, my_data$price, my_data$weight, my_data$luxury)
 y13 <- my_data$qu
@@ -460,10 +456,9 @@ b13 is equal to the coefficient of fuel efficiency in the regression of qu on on
 It is equal because regressing qu and fuel on the other factors and then regressing the residuals is equivalent to finding the coefficient in a multivariate linear regression.
 *TODO theoretical reason why coefficients equal??*
 
+# Question 14
 
-```{r}
-#### 14 ####
-
+```{r regress logs}
 # Repeat regression 12 but now use logqu and logprice and the other variables.
 X14 <- cbind(1, my_data$logprice, my_data$luxury, my_data$weight, my_data$fuel)
 y14 <- my_data$logqu
@@ -508,9 +503,9 @@ plot(x = my_data$logprice, # logprice
 Yes, demand is elastic with respect to price because the absolute value of the coefficient is greater than 1.
 A 100% increase in price leads to a >400% decrease in demand.
 
-```{r}
-#### 15 ####
+# Question 15
 
+```{r regress random variables with increasing sample size}
 # Set seed equal to 12345.
 set.seed("12345")
 
