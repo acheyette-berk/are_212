@@ -1,5 +1,5 @@
 ---
-title: "are212_ps2"
+title: "ARE 212 Problem Set 2"
 author: "Eleanor Adachi/Karla Neri/Anne Cheyette"
 date: "`r Sys.Date()`"
 output: pdf_document
@@ -8,8 +8,6 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-## Problem Set 2
 
 ```{r set up}
 # Comment out after installing
