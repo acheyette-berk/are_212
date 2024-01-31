@@ -194,14 +194,16 @@ stargazer(Reg1,
           column.labels = c("Question 8"),
           dep.var.caption = "Dependent Variable: Quantity (New Car Registrations)",
           covariate.labels = "Price in Thousands of Euros",
-          header = FALSE)
+          header = FALSE,
+          title = "Effect of Price on Quantity - No Constant")
 
 Reg2 <- lm(carspc~price-1,my_data)
 stargazer(Reg2,
           column.labels = c("Question 8"),
           dep.var.caption = "Dependent Variable: Cars per Capita",
           covariate.labels = "Price in Thousands of Euros",
-          header = FALSE)
+          header = FALSE,
+          title = "Effect of Price on Cars per Capity - No Constant")
 
 # TODO how explain findings?? ####
 
@@ -247,7 +249,7 @@ plot(x = y1, # True values on x-axis
 
 There appears to be a positive linear relationship between the quantity and the residual.
 
-# Question 
+# Question 10
 
 ```{r regression with constant}
 # Regress quantity on price and a constant
@@ -283,10 +285,15 @@ y10_hat <- P%*%y10
 y10_hat <- X10%*%b10
 ```
 
-```{r compare with lm model}
+```{r compare with lm model, results='asis'}
 # check with lm model
 Reg10 <- lm(qu~price,my_data)
-summary(Reg10)
+stargazer(Reg10,
+          column.labels = c("Question 10"),
+          dep.var.caption = "Dependent Variable: Quantity (New Car Registrations)",
+          covariate.labels = "Price in Thousands of Euros",
+          header = FALSE,
+          title = "Effect of Price on Quantity")
 
 ```
 
@@ -320,7 +327,7 @@ However, residuals still have a positive linear relationship with quantity.
 
 # Question 11
 
-```{r demeaned regression}
+```{r demeaned regression, results='asis'}
 # Demean quantity
 my_data$dmeanqu <- M0%*%my_data$qu
 
@@ -358,7 +365,12 @@ y11_hat <- x11%*%b11
 
 # check with lm model
 Reg11 <- lm(dmeanqu~dmeanprice,my_data)
-summary(Reg11)
+stargazer(Reg10, Reg11,
+          column.labels = c("Y=Quantity", "Y=Demeaned Quantity"),
+          dep.var.caption = "Dependent Variable: Price and Demeaned Price",
+          covariate.labels = c("Price", "De-meaned Price"),
+          header = FALSE,
+          title = "Effect of Price on Quantity Ordinary Least Squares Regression")
 
 ```
 
