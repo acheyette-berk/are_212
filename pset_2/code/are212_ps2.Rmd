@@ -131,14 +131,14 @@ y1 <- my_data$qu
 b1 <- solve(t(x)%*%x)%*%t(x)%*%y1
 b1
 # projection matrix of reg y1 on x
-P <- x%*%solve(t(x)%*%x)%*%t(x)
+P_1 <- x%*%solve(t(x)%*%x)%*%t(x)
 # residual maker of reg y1 on x: M= I - P
-M <- diag(57)-P
+M_1 <- diag(57)-P_1
 # sum of squared residuals, SSR=e'e
-e <- M%*%y1
+e_1 <- M_1%*%y1
 #e <- y1-x%*%b1
-SSR <- t(e)%*%e
-SSR
+SSR_1 <- t(e_1)%*%e_1
+SSR_1
 # construct demeaner
 i <- c(rep(1,57))
 M0 <- diag(57)-i%*%t(i)*(1/57)
@@ -146,11 +146,11 @@ M0 <- diag(57)-i%*%t(i)*(1/57)
 # demeaned y
 M0y <- M0%*%y1
 # total sum of squares
-SST <- t(M0y)%*%M0y
-SST
+SST_1 <- t(M0y)%*%M0y
+SST_1
 # calculate R squared
-Rsquared <- 1-(SSR/SST)
-Rsquared
+Rsquared_1 <- 1-(SSR_1/SST_1)
+Rsquared_1
 
 # Regress carspc on price without constant
 y2 <- my_data$carspc
@@ -158,13 +158,13 @@ y2 <- my_data$carspc
 b2 <- solve(t(x)%*%x)%*%t(x)%*%y2
 b2
 # projection matrix of reg y2 on x
-P <- x%*%solve(t(x)%*%x)%*%t(x)
+P_2 <- x%*%solve(t(x)%*%x)%*%t(x)
 # residual maker of reg y2 on x: M= I - P
-M <- diag(57)-P
+M_2 <- diag(57)-P_2
 # sum of squared residuals, SSR=e'e
-e <- M%*%y2
-SSR <- t(e)%*%e
-SSR
+e_2 <- M_2%*%y2
+SSR_2 <- t(e_2)%*%e_2
+SSR_2
 # construct demeaner
 i <- c(rep(1,57))
 #M0 <- diag(length(y))-i%*%t(i)*(1/length(y))
@@ -172,11 +172,11 @@ M0 <- diag(57)-i%*%solve(t(i)%*%i)%*%t(i)
 # demeaned y
 M0y <- M0%*%y2
 # total sum of squares
-SST <- t(M0y)%*%M0y
-SST
+SST_2 <- t(M0y)%*%M0y
+SST_2
 # calculate R squared
-Rsquared <- 1-(SSR/SST)
-Rsquared
+Rsquared_2 <- 1-(SSR_2/SST_2)
+Rsquared_2
 
 # compare coefficients
 all.equal(b1,b2)
@@ -193,6 +193,9 @@ summary(Reg2)
 
 ```
 
+The coefficient of quantity regressed on price without a constant is `r b1` and the R squared is `r Rsquared_1`.
+
+The coefficient of cars per capita regressed on price without a constant is `r b2` and the R squared is `r Rsquared_2`.
 
 # Question 9
 
@@ -205,9 +208,9 @@ summary(Reg2)
 # get degrees of freedom, coefficient, and sample size
 
 # project estimates of y
-y1_hat <- P%*%y1
+y1_hat <- P_1%*%y1
 # calculate residuals
-e <- M%*%y1
+e <- M_1%*%y1
 
 # plot fitted (predicted) vs. true (observed) quantities
 plot(x = y1, # True values on x-axis
