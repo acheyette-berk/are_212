@@ -188,6 +188,9 @@ Rsquared_2
 # compare coefficients
 all.equal(b1,b2)
 
+# compare Rsquared
+all.equal(Rsquared_1,Rsquared_2)
+
 # compare to lm regression
 Reg1 <- lm(qu~price-1,my_data)
 stargazer(Reg1,
@@ -204,15 +207,14 @@ stargazer(Reg2,
           covariate.labels = "Price in Thousands of Euros",
           header = FALSE,
           title = "Effect of Price on Cars per Capity - No Constant")
-
-# TODO how explain findings?? ####
-
 ```
 *Report the coefficient on price and compare it to the previous coefficient. Check if they are different in R using all.equal() . Explain your findings.*
 
 The coefficient of quantity regressed on price without a constant is **`r b1`** and the R squared is **`r Rsquared_1`**.
 
 The coefficient of cars per capita regressed on price without a constant is **`r b2`** and the R squared is **`r Rsquared_2`**.
+
+The coefficients are different but the R-squared values are the same.
 
 Note that finding R-squared without a constant is inherently problematic because it assumes that SST is computed relative to the mean of the dependent variable. For models without an intercept, we replicate what the `lm` function does here by calculating SST as the sum of the squared values of the dependent variable, not relative to its mean. 
 
@@ -281,8 +283,8 @@ M0y <- M0%*%y10
 SST <- t(M0y)%*%M0y
 SST
 # calculate R squared
-Rsquared <- 1-(SSR/SST)
-Rsquared
+Rsquared10 <- 1-(SSR/SST)
+Rsquared10
 # project estimates of y
 y10_hat <- P%*%y10
 y10_hat <- X10%*%b10
@@ -358,11 +360,14 @@ M0y <- M0%*%y11
 SST <- t(M0y)%*%M0y
 SST
 # calculate R squared
-Rsquared <- 1-(SSR/SST)
-Rsquared
+Rsquared11 <- 1-(SSR/SST)
+Rsquared11
 # project estimates of y
 y11_hat <- P%*%y11
 y11_hat <- x11%*%b11
+
+# compare R-squared
+Rsquared10 == Rsquared11
 
 # check with lm model
 Reg11 <- lm(dmeanqu~dmeanprice,my_data)
@@ -377,8 +382,7 @@ stargazer(Reg10, Reg11,
 *Compare to analysis in question 10. Why do you get this? Explain the theorem behind this briefly.*
 We get the same coefficient for qu in 10 and dmeanqu in 11.
 We also get the same Rsquared for 10 and 11.
-
-*TODO explain why equivalent (theorem??)* 
+The coefficients are the same because the slopes in a regression that contains a constant term are obtained by demeaning the other explanatory variables and the dependent variable and then regressing the demeaned dependent on the demeaned explanatory variables. (See Corollary 3.2.2 in Greene.)
 
 # Question 12
 
@@ -408,8 +412,8 @@ M0y <- M0%*%y12
 SST <- t(M0y)%*%M0y
 SST
 # calculate R squared
-Rsquared <- 1-(SSR/SST)
-Rsquared
+Rsquared12 <- 1-(SSR/SST)
+Rsquared12
 
 # Generate series of predicted quantity values and plot against quantity
 y12_hat <- P%*%y12
@@ -418,11 +422,11 @@ plot(x = y12, # True values on x-axis
      xlab = "True Values",
      ylab = "Model Fitted Values",
      main = str_wrap("Fitted vs. true values for multivariate linear regression of quantity", 40))
-
-# TODO what do you see in terms of fit? ####
 ```
 
 *What do you see in terms of fit?*
+The fit is better when there are more explanatory variables included in the model. The R-squared value with more variables is **`r Rsquared12`** which is higher than the R-squared value when qu is regressed on only price and a constant, **`r Rsquared10`**.
+
 
 ```{r plot residuals from multivariate linear regression}
 # Plot residuals against fuel efficiency
