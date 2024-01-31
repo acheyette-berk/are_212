@@ -3,6 +3,11 @@ title: "ARE 212 Problem Set 2"
 author: "Eleanor Adachi, Karla Neri, Anna Cheyette, Stephen Stack, Aline Adayo"
 date: "`r Sys.Date()`"
 output: pdf_document
+header-includes:
+  - \usepackage[T1]{fontenc}
+  - \usepackage{textcomp}
+  - \usepackage{lmodern}
+  - \usepackage{underscore}
 ---
 
 ```{r setup, include=FALSE}
@@ -44,6 +49,11 @@ my_data <-
 # Get summary statistics for data
 describe(my_data)
 
+```
+
+```{r summarize data, results='asis'}
+
+
 # Create summary table
 summary_maker <-
   list("Price" =
@@ -62,16 +72,21 @@ summary_maker <-
          list("min" = ~ min(my_data$logqu),
               "max" = ~ max(my_data$logqu),
               "mean (sd)" = ~ qwraps2::mean_sd(my_data$logqu)))
+
 whole <- summary_table(my_data, summary_maker)
 whole
 ```
+
 
 # Question 3
 
 ```{r histogram of qu}
 # Make a histogram of qu
 histqu <- ggplot(my_data, aes(x=qu)) + geom_histogram(bins=15)
-(histqu <- histqu + xlab("Quantity") + ylab("Number of Observations") + ggtitle("Histogram of Quantity"))
+(histqu <- histqu + 
+    xlab("Quantity") + 
+    ylab("Number of Observations") + 
+    ggtitle("Histogram of Quantity"))
 
 ```
 

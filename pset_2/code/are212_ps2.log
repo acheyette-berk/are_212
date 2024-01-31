@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.23)  30 JAN 2024 19:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.23)  31 JAN 2024 12:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -242,6 +242,15 @@ Package graphics Info: Driver file: pdftex.def on input line 107.
 )
 \Gin@req@height=\dimen163
 \Gin@req@width=\dimen164
+) (/usr/local/texlive/2023/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 11
+2.
+(/usr/local/texlive/2023/texmf-dist/tex/latex/lm/t1lmr.fd
+File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)) (/usr/local/texlive/2023/texmf-dist/tex/latex/underscore/underscore.sty
+Package: underscore 2006/09/13
+LaTeX Info: Redefining \_ on input line 42.
 ) (/usr/local/texlive/2023/texmf-dist/tex/latex/bookmark/bookmark.sty
 Package: bookmark 2020-11-06 v1.29 PDF bookmarks (HO)
 (/usr/local/texlive/2023/texmf-dist/tex/latex/hyperref/hyperref.sty
@@ -359,11 +368,6 @@ File: bkm-pdftex.def 2020-11-06 v1.29 bookmark driver for pdfTeX (HO)
 \BKM@id=\count291
 )) (/usr/local/texlive/2023/texmf-dist/tex/latex/xurl/xurl.sty
 Package: xurl 2022/01/09 v 0.10 modify URL breaks
-)
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 11
-4.
-(/usr/local/texlive/2023/texmf-dist/tex/latex/lm/t1lmr.fd
-File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (/usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2023-01-16 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count292
@@ -381,37 +385,37 @@ LaTeX Warning: Label `' multiply defined.
 )
 \openout1 = `are212_ps2.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 114.
-LaTeX Font Info:    ... okay on input line 114.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 114.
-LaTeX Font Info:    ... okay on input line 114.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 114.
-LaTeX Font Info:    ... okay on input line 114.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 114.
-LaTeX Font Info:    ... okay on input line 114.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 114.
-LaTeX Font Info:    ... okay on input line 114.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 114.
-LaTeX Font Info:    ... okay on input line 114.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 114.
-LaTeX Font Info:    ... okay on input line 114.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 114.
-LaTeX Font Info:    ... okay on input line 114.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 114.
-LaTeX Font Info:    ... okay on input line 114.
-LaTeX Info: Redefining \microtypecontext on input line 114.
-Package microtype Info: Applying patch `item' on input line 114.
-Package microtype Info: Applying patch `toc' on input line 114.
-Package microtype Info: Applying patch `eqnum' on input line 114.
-Package microtype Info: Applying patch `footnote' on input line 114.
-Package microtype Info: Applying patch `verbatim' on input line 114.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 118.
+LaTeX Font Info:    ... okay on input line 118.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 118.
+LaTeX Font Info:    ... okay on input line 118.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 118.
+LaTeX Font Info:    ... okay on input line 118.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 118.
+LaTeX Font Info:    ... okay on input line 118.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 118.
+LaTeX Font Info:    ... okay on input line 118.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 118.
+LaTeX Font Info:    ... okay on input line 118.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 118.
+LaTeX Font Info:    ... okay on input line 118.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 118.
+LaTeX Font Info:    ... okay on input line 118.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 118.
+LaTeX Font Info:    ... okay on input line 118.
+LaTeX Info: Redefining \microtypecontext on input line 118.
+Package microtype Info: Applying patch `item' on input line 118.
+Package microtype Info: Applying patch `toc' on input line 118.
+Package microtype Info: Applying patch `eqnum' on input line 118.
+Package microtype Info: Applying patch `footnote' on input line 118.
+Package microtype Info: Applying patch `verbatim' on input line 118.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using protrusion set `basicmath'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 114.
+LaTeX Info: Redefining \showhyphens on input line 118.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -473,41 +477,41 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 114.
+Package hyperref Info: Link coloring OFF on input line 118.
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
-16.
+20.
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
-16.
+20.
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-116.
+120.
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-116.
+120.
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 116.
+(Font)              <12> on input line 120.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 116.
+(Font)              <8> on input line 120.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 116.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 116
+(Font)              <6> on input line 120.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 120
 .
 (/usr/local/texlive/2023/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/usr/local/texlive/2023/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 116
+LaTeX Font Info:    Trying to load font information for U+msb on input line 120
 .
 (/usr/local/texlive/2023/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -515,85 +519,85 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
-18.
+22.
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 123.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 127.
 [1
 
 {/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/loc
-al/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}] [2] [3]
-<are212_ps2_files/figure-latex/histogram of qu-1.pdf, id=28, 459.7175pt x 315.1
+al/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}] [2]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 278.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 278.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 278.
+[3{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
+<are212_ps2_files/figure-latex/histogram of qu-1.pdf, id=31, 459.7175pt x 315.1
 775pt>
 File: are212_ps2_files/figure-latex/histogram of qu-1.pdf Graphic file (type pd
 f)
 <use are212_ps2_files/figure-latex/histogram of qu-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/histogram of qu-1.pdf  u
-sed on input line 325.
+sed on input line 330.
 (pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
-[4 <./are212_ps2_files/figure-latex/histogram of qu-1.pdf>]
-<are212_ps2_files/figure-latex/histogram of cars pc-1.pdf, id=43, 436.63126pt x
+<are212_ps2_files/figure-latex/histogram of cars pc-1.pdf, id=32, 436.63126pt x
  285.065pt>
 File: are212_ps2_files/figure-latex/histogram of cars pc-1.pdf Graphic file (ty
 pe pdf)
 <use are212_ps2_files/figure-latex/histogram of cars pc-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/histogram of cars pc-1.p
-df  used on input line 338.
+df  used on input line 343.
 (pdftex.def)             Requested size: 436.63019pt x 285.0643pt.
-[5 <./are212_ps2_files/figure-latex/histogram of cars pc-1.pdf>]
-<are212_ps2_files/figure-latex/scatter plot-1.pdf, id=58, 459.7175pt x 313.17pt
+[4 <./are212_ps2_files/figure-latex/histogram of qu-1.pdf>]
+<are212_ps2_files/figure-latex/scatter plot-1.pdf, id=47, 459.7175pt x 313.17pt
 >
 File: are212_ps2_files/figure-latex/scatter plot-1.pdf Graphic file (type pdf)
 <use are212_ps2_files/figure-latex/scatter plot-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/scatter plot-1.pdf  used
- on input line 380.
+ on input line 385.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
-<are212_ps2_files/figure-latex/scatter plot-2.pdf, id=59, 462.72874pt x 315.177
+[5 <./are212_ps2_files/figure-latex/histogram of cars pc-1.pdf>]
+<are212_ps2_files/figure-latex/scatter plot-2.pdf, id=62, 462.72874pt x 315.177
 5pt>
 File: are212_ps2_files/figure-latex/scatter plot-2.pdf Graphic file (type pdf)
 <use are212_ps2_files/figure-latex/scatter plot-2.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/scatter plot-2.pdf  used
- on input line 389.
+ on input line 394.
 (pdftex.def)             Requested size: 462.73466pt x 315.18153pt.
 [6 <./are212_ps2_files/figure-latex/scatter plot-1.pdf>]
-<are212_ps2_files/figure-latex/histogram of luxury vs no luxury-1.pdf, id=72, 4
+<are212_ps2_files/figure-latex/histogram of luxury vs no luxury-1.pdf, id=74, 4
 53.695pt x 315.1775pt>
 File: are212_ps2_files/figure-latex/histogram of luxury vs no luxury-1.pdf Grap
 hic file (type pdf)
 <use are212_ps2_files/figure-latex/histogram of luxury vs no luxury-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/histogram of luxury vs n
-o luxury-1.pdf  used on input line 410.
+o luxury-1.pdf  used on input line 415.
 (pdftex.def)             Requested size: 453.6939pt x 315.17673pt.
 [7 <./are212_ps2_files/figure-latex/scatter plot-2.pdf>]
 LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-448.
+453.
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [8{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc} <./are21
-2_ps2_files/figure-latex/histogram of luxury vs no luxury-1.pdf>] [9]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 576.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 576.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 576.
-[10{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/l
-ocal/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2
-023/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}]
+2_ps2_files/figure-latex/histogram of luxury vs no luxury-1.pdf>] [9] [10{/usr/
+local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/
+2023/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}]
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 6
-62.
+76.
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-<are212_ps2_files/figure-latex/regression quantity on price-1.pdf, id=117, 436.
+<are212_ps2_files/figure-latex/regression quantity on price-1.pdf, id=118, 436.
 63126pt x 292.09125pt>
 File: are212_ps2_files/figure-latex/regression quantity on price-1.pdf Graphic 
 file (type pdf)
 <use are212_ps2_files/figure-latex/regression quantity on price-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/regression quantity on p
-rice-1.pdf  used on input line 690.
+rice-1.pdf  used on input line 704.
 (pdftex.def)             Requested size: 436.63019pt x 292.09052pt.
 [11]
 <are212_ps2_files/figure-latex/regression quantity on price-2.pdf, id=128, 436.
@@ -602,7 +606,7 @@ File: are212_ps2_files/figure-latex/regression quantity on price-2.pdf Graphic
 file (type pdf)
 <use are212_ps2_files/figure-latex/regression quantity on price-2.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/regression quantity on p
-rice-2.pdf  used on input line 703.
+rice-2.pdf  used on input line 717.
 (pdftex.def)             Requested size: 436.63019pt x 292.09052pt.
 [12 <./are212_ps2_files/figure-latex/regression quantity on price-1.pdf>] [13 <
 ./are212_ps2_files/figure-latex/regression quantity on price-2.pdf>] [14]
@@ -612,7 +616,7 @@ File: are212_ps2_files/figure-latex/plot fitted vs true-1.pdf Graphic file (typ
 e pdf)
 <use are212_ps2_files/figure-latex/plot fitted vs true-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/plot fitted vs true-1.pd
-f  used on input line 842.
+f  used on input line 864.
 (pdftex.def)             Requested size: 436.63019pt x 292.09052pt.
 <are212_ps2_files/figure-latex/plot residuals vs observed-1.pdf, id=163, 436.63
 126pt x 292.09125pt>
@@ -620,34 +624,44 @@ File: are212_ps2_files/figure-latex/plot residuals vs observed-1.pdf Graphic fi
 le (type pdf)
 <use are212_ps2_files/figure-latex/plot residuals vs observed-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/plot residuals vs observ
-ed-1.pdf  used on input line 855.
+ed-1.pdf  used on input line 877.
 (pdftex.def)             Requested size: 436.63019pt x 292.09052pt.
-[15 <./are212_ps2_files/figure-latex/plot fitted vs true-1.pdf>] [16 <./are212_
-ps2_files/figure-latex/plot residuals vs observed-1.pdf>] [17] [18]
+[15 <./are212_ps2_files/figure-latex/plot fitted vs true-1.pdf>]
+Overfull \vbox (0.30273pt too high) detected at line 929
+ []
+
+[16 <./are212_ps2_files/figure-latex/plot residuals vs observed-1.pdf>] [17] [1
+8]
 <are212_ps2_files/figure-latex/multivariate linear regression-1.pdf, id=201, 43
 6.63126pt x 292.09125pt>
 File: are212_ps2_files/figure-latex/multivariate linear regression-1.pdf Graphi
 c file (type pdf)
 <use are212_ps2_files/figure-latex/multivariate linear regression-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/multivariate linear regr
-ession-1.pdf  used on input line 1089.
+ession-1.pdf  used on input line 1128.
 (pdftex.def)             Requested size: 436.63019pt x 292.09052pt.
-<are212_ps2_files/figure-latex/multivariate linear regression-2.pdf, id=202, 43
-6.63126pt x 302.12875pt>
-File: are212_ps2_files/figure-latex/multivariate linear regression-2.pdf Graphi
-c file (type pdf)
-<use are212_ps2_files/figure-latex/multivariate linear regression-2.pdf>
-Package pdftex.def Info: are212_ps2_files/figure-latex/multivariate linear regr
-ession-2.pdf  used on input line 1104.
+[19 <./are212_ps2_files/figure-latex/multivariate linear regression-1.pdf>]
+<are212_ps2_files/figure-latex/plot residuals from multivariate linear regressi
+on-1.pdf, id=215, 436.63126pt x 302.12875pt>
+File: are212_ps2_files/figure-latex/plot residuals from multivariate linear reg
+ression-1.pdf Graphic file (type pdf)
+<use are212_ps2_files/figure-latex/plot residuals from multivariate linear regr
+ession-1.pdf>
+Package pdftex.def Info: are212_ps2_files/figure-latex/plot residuals from mult
+ivariate linear regression-1.pdf  used on input line 1147.
 (pdftex.def)             Requested size: 436.63019pt x 302.128pt.
-[19 <./are212_ps2_files/figure-latex/multivariate linear regression-1.pdf>] [20
- <./are212_ps2_files/figure-latex/multivariate linear regression-2.pdf>] [21]
+[20 <./are212_ps2_files/figure-latex/plot residuals from multivariate linear re
+gression-1.pdf>]
+Overfull \vbox (1.10593pt too high) detected at line 1270
+ []
+
+[21]
 <are212_ps2_files/figure-latex/regress logs-1.pdf, id=236, 436.63126pt x 294.09
 875pt>
 File: are212_ps2_files/figure-latex/regress logs-1.pdf Graphic file (type pdf)
 <use are212_ps2_files/figure-latex/regress logs-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/regress logs-1.pdf  used
- on input line 1292.
+ on input line 1343.
 (pdftex.def)             Requested size: 436.63019pt x 294.09802pt.
 [22] [23 <./are212_ps2_files/figure-latex/regress logs-1.pdf>] [24] (./are212_p
 s2.aux)
@@ -656,11 +670,11 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 14174 strings out of 476025
- 228112 string characters out of 5790017
+ 14221 strings out of 476025
+ 229458 string characters out of 5790017
  1879388 words of memory out of 5000000
- 34248 multiletter control sequences out of 15000+600000
- 564560 words of font info for 113 fonts, out of 8000000 for 9000
+ 34275 multiletter control sequences out of 15000+600000
+ 565329 words of font info for 120 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  77i,10n,81p,1007b,714s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/lo
@@ -675,7 +689,7 @@ xlive/2023/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/local/texlive/2023/
 texmf-dist/fonts/type1/public/lm/lmtk10.pfb></usr/local/texlive/2023/texmf-dist
 /fonts/type1/public/lm/lmtt10.pfb></usr/local/texlive/2023/texmf-dist/fonts/typ
 e1/public/lm/lmtti10.pfb>
-Output written on are212_ps2.pdf (24 pages, 398612 bytes).
+Output written on are212_ps2.pdf (24 pages, 406733 bytes).
 PDF statistics:
  386 PDF objects out of 1000 (max. 8388607)
  292 compressed objects within 3 object streams
