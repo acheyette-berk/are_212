@@ -525,7 +525,7 @@ The residuals are mostly clustered around the zero line for the majority of the 
 
 # Question 13
 
-```{r regress residuals}
+```{r regress residuals, results='asis'}
 # Regress quantity on a constant, price, weight, and luxury indicator
 X13 <- cbind(1, my_data$price, my_data$weight, my_data$luxury)
 y13 <- my_data$qu
@@ -568,12 +568,32 @@ SST
 # calculate R squared
 Rsquared <- 1-(SSR/SST)
 Rsquared
+
+# compare with lm
+Reg13 <- lm(qu ~ price + weight + luxury, my_data)
+Reg13_fuel <- lm(fuel ~ price + weight + luxury, my_data)
+reg13_res <- lm(qures ~ fuelres - 1)
+
+stargazer(Reg13, Reg13_fuel, reg13_res,
+          column.labels = c("Y=Quantity", 
+                            "Y=Fuel Efficiency",
+                            "Y=Quantity Residuals"),
+          dep.var.caption = "",
+          covariate.labels =
+          c("Price in Thousands of Euros",
+            "Weight (kg)",
+            "Luxury Indicator",
+            "Fuel Residuals"),
+          header = FALSE,
+          title = "Multivariate Regressions of Quantity, Fuel Efficiency, and Residuals - Model Using lm Function")
+
 ```
 
 
 *Report your findings*
 *We wanted to get  effect of fuel consumption on quantity, all else constant.*
 *To which coefficient of a previous question is the coefficient of fuelres equal to, and why?*
+
 b13 is equal to the coefficient of fuel efficiency in the regression of qu on on a constant, price, luxury indicator, weight, and fuel efficiency.
 
 This is a demonstration of the Frish-Waugh-Lovell Theorem. Let us partition the original $X$ into $X_1$ and $X_2$ where $X_1$ includes the constant, price, luxury, and weight and $X_2$ includes fuel and let $y$ equal quantity. If $X_1$ and $X_2$ are not orthogonal, then $b_2$ is equal to the coefficients obtained when the residuals of regressing $y$ on $x_1$ are regressed on the residuals of regressing $X_2$ on $X_1$.
