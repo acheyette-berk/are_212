@@ -1,0 +1,644 @@
+---
+title: "ARE 212 Problem Set 2"
+author: "Eleanor Adachi, Karla Neri, Anna Cheyette, Stephen Stack, Aline Adayo"
+date: "`r Sys.Date()`"
+output: pdf_document
+header-includes:
+  - \usepackage[T1]{fontenc}
+  - \usepackage{textcomp}
+  - \usepackage{lmodern}
+  - \usepackage{underscore}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r set up}
+# Comment out after installing
+# install.packages("pacman")
+
+options(scipen = 999)
+
+# Load packages
+library(pacman)
+p_load(tidyverse, haven, readr, knitr, psych, ggplot2,stats4, stargazer,
+       magrittr, qwraps2, Jmisc)
+
+# get directory of current file
+current_directory <-
+  dirname(dirname(rstudioapi::getSourceEditorContext()$path))
+```
+
+# Question 1
+
+```{r load data}
+# Load data
+my_data <- read_dta(file.path(current_directory, "data", "pset2_2024.dta"))
+head(my_data)
+
+# Create new variables
+my_data <- 
+  mutate(my_data, 
+         logprice=log(price), 
+         logqu=log(qu), 
+         carspc=qu/pop)
+```
+
+# Question 2
+
+```{r describe data}
+# Get summary statistics for data
+describe(my_data)
+
+```
+
+```{r summarize data, results='asis'}
+
+
+# Create summary table
+summary_maker <-
+  list("Price" =
+         list("min" = ~ min(my_data$price),
+              "max" = ~ max(my_data$price),
+              "mean (sd)" = ~ qwraps2::mean_sd(my_data$price)),
+       "Log of Price" =
+         list("min" = ~ min(my_data$logprice),
+              "max" = ~ max(my_data$logprice),
+              "mean (sd)" = ~ qwraps2::mean_sd(my_data$logprice)),
+       "Quantity" =
+         list("min" = ~ min(my_data$qu),
+              "max" = ~ max(my_data$qu),
+              "mean (sd)" = ~ qwraps2::mean_sd(my_data$qu)),
+       "Log of Quantity" =
+         list("min" = ~ min(my_data$logqu),
+              "max" = ~ max(my_data$logqu),
+              "mean (sd)" = ~ qwraps2::mean_sd(my_data$logqu)))
+
+whole <- summary_table(my_data, summary_maker)
+whole
+```
+
+
+# Question 3
+
+```{r histogram of qu}
+# Make a histogram of qu
+histqu <- ggplot(my_data, aes(x=qu)) + geom_histogram(bins=15)
+(histqu <- histqu + 
+    xlab("Quantity") + 
+    ylab("Number of Observations") + 
+    ggtitle(str_wrap("Histogram of Quantity of New Car Registrations", 40)) +
+    theme_minimal() +
+    theme(plot.title = element_text(hjust = 0.5)))
+
+```
+
+# Question 4
+
+```{r histogram of cars pc}
+# Make a histogram of carspc
+histcarspcvertical <- 
+  ggplot(my_data, aes(carspc)) +
+  geom_histogram(bins = 20) +
+  geom_vline(xintercept = 0.002, color = "red") +
+  geom_label(x = 0.002, y = 26, label = "0.002 Cars per Person", color = "red") +
+  labs(title = "Cars per Capita Distribution",
+       x = "Cars per Capita in US", y = "Count") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+histcarspcvertical
+```
+
+# Question 5
+
+```{r scatter plots}
+# Make scatter plots of price vs. qu and logprice vs. logqu
+scatter <- ggplot(my_data, aes(x=price, y=qu)) + geom_point()
+(scatter <- 
+    scatter + 
+    xlab("Price") + 
+    ylab("Quantity") + 
+    ggtitle("Scatter Plot of Quantity vs. Price"))
+
+
+scatter_logs <- ggplot(my_data, aes(x=logprice, y=logqu)) + geom_point()
+(scatter_logs <- 
+    scatter_logs + 
+    xlab("Log of Price") + 
+    ylab("Log of Quantity") + 
+    ggtitle("Scatter Plot of Log of Quantity vs. Log of Price"))
+
+```
+
+# Question 6
+```{r histogram of luxury vs no luxury}
+# Filter data by luxury
+dataluxury <- filter(my_data, luxury==1)
+datanoluxury <- filter(my_data, luxury==0)
+
+# Make overlapping histograms for luxury and non-luxury
+histprice_luxnolux <- 
+  ggplot() +
+  geom_density(data=dataluxury, 
+               aes(x=price, fill="r"), alpha = 0.8) +
+  geom_density(data=datanoluxury, 
+               aes(x=price, fill="g"), alpha = 0.8) +
+  scale_fill_manual(name="Luxury", values=c("r"="red", "g"="green"),
+                    labels=c("r"="Luxury Models", "g"="Non-Luxury Models"))
+histprice_luxnolux
+
+```
+
+
+# Question 7
+
+```{r export data}
+# Export data
+write.csv(my_data, file="my_data2024.csv")
+```
+
+# Question 8
+
+```{r regressions, results='asis'}
+# Regress qu on price without constant
+x <- my_data$price
+y1 <- my_data$qu
+# find coefficient
+b1 <- solve(t(x) %*% x) %*% t(x) %*% y1
+
+# projection matrix of reg y1 on x
+P_1 <- x%*%solve(t(x)%*%x)%*%t(x)
+# residual maker of reg y1 on x: M= I - P
+M_1 <- diag(57)-P_1
+# sum of squared residuals, SSR=e'e
+e_1 <- M_1%*%y1
+SSR_1 <- t(e_1) %*% e_1
+
+
+# calculate SST as the sum of the squared values of the dependent
+# variable, not relative to its mean bc we do not have a constant.
+SST_1 <- t(y1) %*% y1
+
+# calculate R squared
+Rsquared_1 <- 1-(SSR_1/SST_1)
+Rsquared_1
+
+# Regress carspc on price without constant
+y2 <- my_data$carspc
+# find coefficient
+b2 <- solve(t(x) %*% x) %*% t(x) %*% y2
+
+# projection matrix of reg y2 on x
+P_2 <- x %*% solve(t(x) %*% x) %*% t(x)
+
+# residual maker of reg y2 on x: M= I - P
+M_2 <- diag(57)-P_2
+# sum of squared residuals, SSR=e'e
+e_2 <- M_2%*%y2
+SSR_2 <- t(e_2)%*%e_2
+
+
+# calculate SST as the sum of the squared values of the dependent
+# variable, not relative to its mean bc we do not have a constant.
+SST_2 <- t(y2) %*% y2
+
+# calculate R squared
+Rsquared_2 <- 1-(SSR_2/SST_2)
+Rsquared_2
+
+# compare coefficients
+all.equal(b1, b2)
+
+# compare Rsquared
+all.equal(Rsquared_1, Rsquared_2)
+
+# compare to lm regression
+Reg1 <- lm(qu~price-1,my_data)
+stargazer(Reg1,
+          column.labels = c("Question 8"),
+          dep.var.caption = "Dependent Variable: Quantity (New Car Registrations)",
+          covariate.labels = "Price in Thousands of Euros",
+          header = FALSE,
+          title = "Effect of Price on Quantity - No Constant - Regression Using lm() Function")
+
+Reg2 <- lm(carspc~price-1,my_data)
+stargazer(Reg2,
+          column.labels = c("Question 8"),
+          dep.var.caption = "Dependent Variable: Cars per Capita",
+          covariate.labels = "Price in Thousands of Euros",
+          header = FALSE,
+          title = "Effect of Price on Cars per Capity - No Constant - Regression Using lm() Function")
+```
+*Report the coefficient on price and compare it to the previous coefficient. Check if they are different in R using all.equal(). Explain your findings.*
+
+The coefficient of quantity regressed on price without a constant is **`r b1`** and the R squared is **`r Rsquared_1`**.
+
+The coefficient of cars per capita regressed on price without a constant is **`r b2`** and the R squared is **`r Rsquared_2`**.
+
+We are able to find the same coefficients and R-squared values using matrix algebra as with the canned `lm()` function. 
+
+The coefficients (b1 and b2) are different but the R-squared values are the same.
+
+Note that finding R-squared without a constant is inherently problematic because it assumes that SST is computed relative to the mean of the dependent variable. For models without an intercept, we replicate what the `lm` function does here by calculating SST as the sum of the squared values of the dependent variable, not relative to its mean. 
+
+The fact that we are able to get the same R-squared values across both regressions indicates how problematic relying on R^2 for regressions without an intercept can be. The fact that both models have the same R-squared value but vastly different coefficients suggests that while the proportion of explained variability is similar, the nature of the relationship between the independent variable (price) and each dependent variable is different. Price has a much more pronounced effect on the quantity of new car registrations than on cars per capita.
+
+# Question 9
+
+
+```{r regression quantity on price}
+# regression of quantity on price
+# get degrees of freedom, coefficient, and sample size
+
+# project estimates of y
+y1_hat <- P_1%*%y1
+# calculate residuals
+e <- M_1%*%y1
+
+# plot fitted (predicted) vs. true (observed) quantities
+ggplot() +
+  # True values on x-axis, fitted values on y-axis
+  geom_point(aes(x = y1, y = y1_hat)) +
+  labs(x = "True Values",
+       y = "Model Fitted Values",
+       title = str_wrap( 
+         "Fitted vs. true values for regression of quantity on price (no constant)", 
+         40)) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# plot residuals vs. true (observed) quantities
+ggplot() +
+  # True values on x-axis, residuals on y-axis
+  geom_point(aes(x = y1, y = e)) +
+  labs(x = "True Values",
+       y = "Residuals",
+       title = str_wrap( 
+         "Residuals vs. true values for regression of quantity on price (no constant)", 
+         40)) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+- sample size, n = `r length(x)`
+- number of explanatory variables, k = 1
+- degrees of freedom, n - k = `r length(x) - 1`
+- estimate of coefficient, b = `r b1`
+
+*What do you see in terms of fit and whether the constant variance assumption for the residuals is valid or not?*
+
+In the fitted vs. true values plot, we can see that the points do *not* fall along the 45 degree line. If our model had perfect predictive power, we would see the points falling along the 45-degree line. In our plot, it appears that the model predicts lower values relatively well but significantly underestimates the quantity as the true value increases.
+
+There appears to be a positive linear relationship between the quantity and the residual. 
+
+The key assumption of constant variance (homoscedasticity) in linear regression is that the residuals should be spread randomly around zero, with no clear pattern, and their spread should not change systematically across the range of observed values.
+
+In this plot, the residuals increase with the true values, suggesting that the variance of the residuals is not constant — it grows with the level of the dependent variable. This pattern of increasing spread is indicative of heteroscedasticity, which violates the assumption of constant variance in the residuals.
+
+# Question 10
+
+```{r regression with constant}
+# Regress quantity on price and a constant
+# add constant
+X10 <- cbind(1, x)
+y10 <- my_data$qu
+# find coefficient
+b10 <- solve(t(X10)%*%X10)%*%t(X10)%*%y10
+b10
+# projection matrix of reg y1 on X
+P <- X10%*%solve(t(X10)%*%X10)%*%t(X10)
+# residual maker of reg y1 on x: M= I - P
+M <- diag(57)-P
+# sum of squared residuals, SSR=e'e
+e10 <- M%*%y10
+SSR <- t(e10)%*%e10
+
+# construct demeaner
+i <- c(rep(1,57))
+M0 <- diag(57)-i%*%t(i)*(1/57)
+# demeaned y
+M0y <- M0%*%y10
+# total sum of squares
+SST <- t(M0y)%*%M0y
+
+# calculate R squared
+Rsquared10 <- 1-(SSR/SST)
+Rsquared10
+# project estimates of y
+y10_hat <- P%*%y10
+y10_hat <- X10%*%b10
+```
+
+```{r compare with lm model, results='asis'}
+# check with lm model
+Reg10 <- lm(qu~price,my_data)
+stargazer(Reg10,
+          column.labels = c("Question 10"),
+          dep.var.caption = "Dependent Variable: Quantity (New Car Registrations)",
+          covariate.labels = "Price in Thousands of Euros",
+          header = FALSE,
+          title = "Effect of Price on Quantity - Model Using lm Function")
+
+```
+
+```{r plot fitted vs true}
+# plot fitted (predicted) vs. true (observed) quantities
+ggplot() +
+  # True values on x-axis, fitted values on y-axis
+  geom_point(aes(x = y10, y = y10_hat)) +
+  labs(x = "True Values",
+       y = "Model Fitted Values",
+       title = str_wrap( 
+         "Fitted vs. true values for regression of quantity on price with constant", 
+         40)) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+```{r plot residuals vs observed}
+# plot residuals vs. true (observed) quantities
+ggplot() +
+  # True values on x-axis, residuals on y-axis
+  geom_point(aes(x = y10, y = e10)) +
+  labs(x = "True Values",
+       y = "Residuals",
+       title = str_wrap( 
+         "Residuals vs. true values for regression of quantity on price with constant", 
+         40)) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+*What do you see in terms of fit and whether constant variance assumption for residuals is valid? Has the fit improved or not relative to the question 8 analysis?*
+
+Rsquared has increased compared to question 8.
+
+The fitted vs. true values plot shows that the data points still do not cluster as closely around a line as would be expected in a well-fitted model. There are also a few negative fitted values, which could be indicative of overfitting.
+
+In the residuals vs. true values plot, the spread of residuals is not constant, indicating potential heteroscedasticity. The residuals for lower true values are scattered around zero but deviate more as the true values increase, with some extreme residuals corresponding to the highest true values. This pattern suggests that the variance of the residuals is not constant and that the model fits less well as the quantity increases.
+
+The inclusion of a constant term does not seem to have notably improved the fit of the model. The points in the fitted vs. true values plot are still not aligning along a line indicating good prediction, and the residuals plot still exhibits a pattern suggesting heteroscedasticity. The presence of extreme values in the true values of quantity could be having a disproportionate effect on the model, which may explain the presence of negative fitted values and large residuals.
+
+# Question 11
+
+```{r demeaned regression, results='asis'}
+# Demean quantity
+my_data$dmeanqu <- M0%*%my_data$qu
+
+# Demean price and call it 
+my_data$dmeanprice <- M0%*%my_data$price
+
+# Regress demeaned quantity on demeaned price variable and no constant
+x11 <- my_data$dmeanprice
+y11 <- my_data$dmeanqu
+# find coefficient
+b11 <- solve(t(x11)%*%x11)%*%t(x11)%*%y11
+b11
+# projection matrix, P
+P <- x11%*%solve(t(x11)%*%x11)%*%t(x11)
+# residual maker, M = I - P
+M <- diag(57)-P
+# sum of squared residuals, SSR = e'e
+e11 <- M%*%y11
+SSR <- t(e11)%*%e11
+SSR
+# construct demeaner
+i <- c(rep(1,57))
+M0 <- diag(57)-i%*%t(i)*(1/57)
+# demeaned y--unnecessary??
+M0y <- M0%*%y11
+# total sum of squares
+SST <- t(M0y)%*%M0y
+SST
+# calculate R squared
+Rsquared11 <- 1-(SSR/SST)
+Rsquared11
+# project estimates of y
+y11_hat <- P%*%y11
+y11_hat <- x11%*%b11
+
+# compare R-squared
+Rsquared10 == Rsquared11
+
+# check with lm model
+Reg11 <- lm(dmeanqu~dmeanprice,my_data)
+stargazer(Reg10, Reg11,
+          column.labels = c("Y=Quantity", "Y=Demeaned Quantity"),
+          dep.var.caption = "Dependent Variable: Price and Demeaned Price",
+          covariate.labels = c("Price", "De-meaned Price"),
+          header = FALSE,
+          title = "Effect of Price on Quantity Ordinary Least Squares Regression")
+
+```
+*Compare to analysis in question 10. Why do you get this? Explain the theorem behind this briefly.*
+We get the same coefficient for qu in 10 and dmeanqu in 11.
+We also get the same Rsquared for 10 and 11.
+The coefficients are the same because the slopes in a regression that contains a constant term are obtained by demeaning the other explanatory variables and the dependent variable and then regressing the demeaned dependent on the demeaned explanatory variables. (See Corollary 3.2.2 in Greene.)
+
+# Question 12
+
+```{r multivariate linear regression}
+# Regress quantity on a constant, price, luxury indicator, weight, and fuel efficiency
+# add constant
+X12 <- cbind(1, my_data$price, my_data$luxury, my_data$weight, my_data$fuel)
+y12 <- my_data$qu
+# find coefficient
+b12 <- solve(t(X12)%*%X12)%*%t(X12)%*%y12
+b12
+# projection matrix, P
+P <- X12%*%solve(t(X12)%*%X12)%*%t(X12)
+# residual maker, M = I - P
+M <- diag(57)-P
+# calculate residuals
+e12 <- M%*%y12
+# sum of squared residuals, SSR=e'e
+SSR <- t(e12)%*%e12
+SSR
+# construct demeaner
+i <- c(rep(1,57))
+M0 <- diag(57)-i%*%t(i)*(1/57)
+# demeaned y
+M0y <- M0%*%y12
+# total sum of squares
+SST <- t(M0y)%*%M0y
+SST
+# calculate R squared
+Rsquared12 <- 1-(SSR/SST)
+Rsquared12
+
+# Generate series of predicted quantity values and plot against quantity
+y12_hat <- P%*%y12
+plot(x = y12, # True values on x-axis
+     y = y12_hat, # fitted values on y-axis
+     xlab = "True Values",
+     ylab = "Model Fitted Values",
+     main = str_wrap("Fitted vs. true values for multivariate linear regression of quantity", 40))
+```
+
+*What do you see in terms of fit?*
+The fit is better when there are more explanatory variables included in the model. The R-squared value with more variables is **`r Rsquared12`** which is higher than the R-squared value when qu is regressed on only price and a constant, **`r Rsquared10`**.
+
+
+```{r plot residuals from multivariate linear regression}
+# Plot residuals against fuel efficiency
+plot(x = my_data$fuel, # fuel efficiency on x-axis
+     y = e12, # residuals on y-axis
+     xlab = "Fuel Efficiency (liter per km)",
+     ylab = "Residuals",
+     main = str_wrap("Residuals vs. fuel efficiency from multivariate linear regression of quantity", 40))
+
+# TODO is the constant variance assumption for the residuals valid or not? ####
+```
+
+*Is the constant variance assumption for the residuals valid or not?*
+
+# Question 13
+
+```{r regress residuals}
+# Regress quantity on a constant, price, weight, and luxury indicator
+X13 <- cbind(1, my_data$price, my_data$weight, my_data$luxury)
+y13 <- my_data$qu
+# projection matrix, P
+P <- X13%*%solve(t(X13)%*%X13)%*%t(X13)
+# residual maker, M = I - P
+M <- diag(57)-P
+# calculate residuals, save as qures
+qures <- M%*%y13
+
+# Regress fuel on a constant, price, weight, and luxury indicator
+# X13, P and M are the same
+y13 <- my_data$fuel
+# calculate residuals, save as fuelres
+fuelres <- M%*%y13
+
+# Regress qures on fuelres (or Y13 on X13) and no constant
+x13 = fuelres
+y13 = qures
+# find coefficient
+b13 <- solve(t(x13)%*%x13)%*%t(x13)%*%y13
+b13
+# projection matrix, P
+P <- x13%*%solve(t(x13)%*%x13)%*%t(x13)
+# residual maker, M = I - P
+M <- diag(57)-P
+# calculate residuals
+e13 <- M%*%y13
+# sum of squared residuals, SSR=e'e
+SSR <- t(e13)%*%e13
+SSR
+# construct demeaner
+i <- c(rep(1,57))
+M0 <- diag(57)-i%*%t(i)*(1/57)
+# demeaned y
+M0y <- M0%*%y13
+# total sum of squares
+SST <- t(M0y)%*%M0y
+SST
+# calculate R squared
+Rsquared <- 1-(SSR/SST)
+Rsquared
+```
+
+
+*Report your findings*
+*We wanted to get  effect of fuel consumption on quantity, all else constant.*
+*To which coefficient of a previous question is the coefficient of fuelres equal to, and why?*
+b13 is equal to the coefficient of fuel efficiency in the regression of qu on on a constant, price, luxury indicator, weight, and fuel efficiency.
+
+This is a demonstration of the Frish-Waugh-Lovell Theorem. Let us partition the original $X$ into $X_1$ and $X_2$ where $X_1$ includes the constant, price, luxury, and weight and $X_2$ includes fuel and let $y$ equal quantity. If $X_1$ and $X_2$ are not orthogonal, then $b_2$ is equal to the coefficients obtained when the residuals of regressing $y$ on $x_1$ are regressed on the residuals of regressing $X_2$ on $X_1$.
+
+
+# Question 14
+
+```{r regress logs}
+# Repeat regression 12 but now use logqu and logprice and the other variables.
+X14 <- cbind(1, my_data$logprice, my_data$luxury, my_data$weight, my_data$fuel)
+y14 <- my_data$logqu
+# find coefficient
+b14 <- solve(t(X14)%*%X14)%*%t(X14)%*%y14
+b14
+# projection matrix, P
+P <- X14%*%solve(t(X14)%*%X14)%*%t(X14)
+# residual maker, M = I - P
+M <- diag(57)-P
+# calculate residuals
+e14 <- M%*%y14
+# sum of squared residuals, SSR=e'e
+SSR <- t(e14)%*%e14
+SSR
+# construct demeaner
+i <- c(rep(1,57))
+M0 <- diag(57)-i%*%t(i)*(1/57)
+# demeaned y
+M0y <- M0%*%y14
+# total sum of squares
+SST <- t(M0y)%*%M0y
+SST
+# calculate R squared
+Rsquared <- 1-(SSR/SST)
+Rsquared
+
+# Generate series of predicted logqu values and plot against logprice
+y14_hat <- P%*%y14
+plot(x = my_data$logprice, # logprice
+     y = y14_hat, # fitted logqu values on y-axis
+     xlab = "Log of Price",
+     ylab = "Log of Quantity (Predicted)",
+     main = str_wrap("Log of Quantity (Predicted) vs. Log of Price from Regression in Logs", 40))
+
+```
+
+
+
+*Call this the Regression in logs.*
+*Is the estimated car demand elastic with respect to price?*
+Yes, demand is elastic with respect to price because the absolute value of the coefficient is greater than 1.
+A 100% increase in price leads to a >400% decrease in demand.
+
+# Question 15
+
+```{r regress random variables with increasing sample size}
+# Set seed equal to 12345.
+set.seed("12345")
+
+# Generate two random variables, x and e, of dimension n = 100 such that x, e N(0, 1).
+n = 100
+x <- rnorm(n, mean=0, sd=1)
+e <- rnorm(n, mean=0, sd=1)
+
+# Generate a random variable y according to the data-generating process yi = xi + ei.
+y = x + e
+
+# Show that if you regress y on x and a constant,
+# then you will get an estimate of the intercept beta0 and the coefficient on x, beta1.
+X100 <- cbind(1, x)
+# find coefficient
+b100 <- solve(t(X100)%*%X100)%*%t(X100)%*%y
+b100
+
+# Increase the sample to 1000, then 10000, and repeat the estimation.
+# sample size = 1000
+n = 1000
+x <- rnorm(n, mean=0, sd=1)
+e <- rnorm(n, mean=0, sd=1)
+y = x + e
+X1000 <- cbind(1, x)
+b1000 <- solve(t(X1000)%*%X1000)%*%t(X1000)%*%y
+b1000
+# sample size = 10000
+n = 10000
+x <- rnorm(n, mean=0, sd=1)
+e <- rnorm(n, mean=0, sd=1)
+y = x + e
+X10000 <- cbind(1, x)
+b10000 <- solve(t(X10000)%*%X10000)%*%t(X10000)%*%y
+b10000
+```
+
+*What do you see as you increase the sample?*
+As the sample size increases, beta0 approaches 0 and beta1 approaches 1.
+

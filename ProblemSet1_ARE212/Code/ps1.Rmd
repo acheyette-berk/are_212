@@ -1,0 +1,79 @@
+---
+title: "Problem Set 1 - ARE 212 - Anna Cheyette"
+output: pdf_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r set up}
+library(haven)
+library(tidyverse)
+
+# get directory of current file
+current_directory <- dirname(dirname(rstudioapi::getSourceEditorContext()$path))
+
+# read in data
+carsdf <- read_dta(file.path(current_directory, "Data",
+                             "pset1_2024.dta"))
+
+```
+
+
+## Summarize data
+
+The data in column qu has a very wide range. The minimum value is 294, while the max value is 351,477. This is a much wider range than any of the other variables. The data is also heavily right-skewed.
+
+```{r work with data}
+# work with data
+summary(carsdf)
+
+```
+
+## Create a new variable
+
+```{r create new variable}
+carsdf <-
+  carsdf %>% 
+  mutate(price_euros = price*1000)
+
+```
+
+
+## Make histogram of prices
+
+```{r histogram}
+
+# histogram of price in euros
+price_hist <- hist(carsdf$price_euros, 
+                   main = "Automobile Prices in Euros",
+                   xlab = "Price (Euros)")
+
+# Open a blank PDF
+pdf(file.path(current_directory, 
+              "Output", 
+              "price2024khist.pdf"))
+# Create a histogram (this will go into the blank PDF)
+price_hist
+# Close the PDF
+dev.off()
+
+```
+
+## Make boxplot of weights
+```{r boxplot}
+
+# boxplot of weight
+weight_boxplot <- boxplot(carsdf$weight, main = "Car Weight Boxplot")
+
+```
+
+## Write updated data to file
+```{r save output}
+write.csv(carsdf, 
+          file.path(current_directory, "Data",
+                    "temp2024.csv"))
+```
