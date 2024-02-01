@@ -241,9 +241,10 @@ We are able to find the same coefficients and R-squared values using matrix alge
 
 The coefficients (b1 and b2) are different but the R-squared values are the same.
 
-Note that finding R-squared without a constant is inherently problematic because it assumes that SST is computed relative to the mean of the dependent variable. For models without an intercept, we replicate what the `lm` function does here by calculating SST as the sum of the squared values of the dependent variable, not relative to its mean. 
+Note that finding R-squared without a constant is inherently problematic because it assumes that SST is computed relative to the mean of the dependent variable. For models without an intercept, we replicate what the `lm` function does here by calculating SST as the sum of the squared values of the dependent variable, not relative to its mean. However, this means that this R-squared is no longer a proportion of variation explained.
 
-The fact that we are able to get the same R-squared values across both regressions indicates how problematic relying on R^2 for regressions without an intercept can be. The fact that both models have the same R-squared value but vastly different coefficients suggests that while the proportion of explained variability is similar, the nature of the relationship between the independent variable (price) and each dependent variable is different. Price has a much more pronounced effect on the quantity of new car registrations than on cars per capita.
+Furthermore, because the R-squared values are the same for regression of $y_1$ on $x$ and regression of $y_2$ on $x$, this suggests that unless $y_1$ and $y_2$ are perfectly correlated (i.e. $y_2$ is linear in $y_1_$), this method of calculating R-squared does not depend on the variation in $y$ and only depends on the variation in $x$.
+
 
 # Question 9
 
@@ -266,6 +267,7 @@ ggplot() +
        title = str_wrap( 
          "Fitted vs. true values for regression of quantity on price (no constant)", 
          40)) +
+  ylim(0,max(my_data$qu)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 
@@ -290,13 +292,13 @@ ggplot() +
 
 *What do you see in terms of fit and whether the constant variance assumption for the residuals is valid or not?*
 
-In the fitted vs. true values plot, we can see that the points do *not* fall along the 45 degree line. If our model had perfect predictive power, we would see the points falling along the 45-degree line. In our plot, it appears that the model predicts lower values relatively well but significantly underestimates the quantity as the true value increases.
+In the fitted vs. true values plot, we can see that the points do *not* fall along the 45 degree line. If our model had perfect predictive power, we would see the points falling along the 45-degree line. In our plot, it appears that the model predicts lower values relatively well but significantly underestimates the quantity as the true value increases. In addition, the model's estimates for large values of quantity are extremely poor, although it is possible that these are outliers.
 
-There appears to be a positive linear relationship between the quantity and the residual. 
+There appears to be a positive linear relationship between the price and the residual. 
 
 The key assumption of constant variance (homoscedasticity) in linear regression is that the residuals should be spread randomly around zero, with no clear pattern, and their spread should not change systematically across the range of observed values.
 
-In this plot, the residuals increase with the true values, suggesting that the variance of the residuals is not constant — it grows with the level of the dependent variable. This pattern of increasing spread is indicative of heteroscedasticity, which violates the assumption of constant variance in the residuals.
+In this plot, the residuals decrease as the price increases, suggesting that the variance of the residuals is not constant — they decrease for higher prices. This pattern of decreasing spread is indicative of heteroscedasticity, which violates the assumption of constant variance in the residuals.
 
 # Question 10
 
@@ -354,6 +356,7 @@ ggplot() +
        title = str_wrap( 
          "Fitted vs. true values for regression of quantity on price with constant", 
          40)) +
+  ylim(NA, max(my_data$qu)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 
@@ -379,7 +382,7 @@ Rsquared has increased compared to question 8.
 
 The fitted vs. true values plot shows that the data points still do not cluster as closely around a line as would be expected in a well-fitted model. There are also a few negative fitted values, which could be indicative of overfitting.
 
-In the residuals vs. true values plot, the spread of residuals is not constant, indicating potential heteroscedasticity. The residuals for lower true values are scattered around zero but deviate more as the true values increase, with some extreme residuals corresponding to the highest true values. This pattern suggests that the variance of the residuals is not constant and that the model fits less well as the quantity increases.
+In the residuals vs. prices plot, the spread of residuals is not constant and there is an upward trend, indicating potential heteroscedasticity. The spread of the residuals decreases as the price increases. In addition, the residuals appear to be centered around an upward-sloping line and not zero. This pattern suggests that the variance of the residuals is not constant.
 
 The inclusion of a constant term does not seem to have notably improved the fit of the model. The points in the fitted vs. true values plot are still not aligning along a line indicating good prediction, and the residuals plot still exhibits a pattern suggesting heteroscedasticity. The presence of extreme values in the true values of quantity could be having a disproportionate effect on the model, which may explain the presence of negative fitted values and large residuals.
 
