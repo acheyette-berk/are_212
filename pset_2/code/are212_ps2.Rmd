@@ -441,7 +441,7 @@ The coefficients are the same because the slopes in a regression that contains a
 
 # Question 12
 
-```{r multivariate linear regression}
+```{r multivariate linear regression, results = 'asis'}
 # Regress quantity on a constant, price, luxury indicator, weight, and fuel efficiency
 # add constant
 X12 <- cbind(1, my_data$price, my_data$luxury, my_data$weight, my_data$fuel)
@@ -470,31 +470,58 @@ SST
 Rsquared12 <- 1-(SSR/SST)
 Rsquared12
 
+# compare with lm
+Reg12 <- lm(qu ~ price + luxury + weight + fuel, my_data)
+stargazer(Reg12,
+          column.labels = c("Question 12"),
+          dep.var.caption = "Dependent Variable: Quantity (New Car Registrations)",
+          covariate.labels = 
+            c("Price in Thousands of Euros", 
+              "Luxury Indicator",
+              "Weight (kg)",
+              "Fuel Efficiency (liter/km)"),
+          header = FALSE,
+          title = "Multivariate Regression - Model Using lm Function")
+```
+
+```{r plot fitted vs true multivariate}
 # Generate series of predicted quantity values and plot against quantity
 y12_hat <- P%*%y12
-plot(x = y12, # True values on x-axis
-     y = y12_hat, # fitted values on y-axis
-     xlab = "True Values",
-     ylab = "Model Fitted Values",
-     main = str_wrap("Fitted vs. true values for multivariate linear regression of quantity", 40))
+
+ggplot() +
+  # True values on x-axis, fitted values on y-axis
+  geom_point(aes(x = y12, y = y12_hat)) +
+  labs(x = "True Values",
+       y = "Fitted Values",
+       title = str_wrap(
+         "Fitted vs. true values for multivariate linear regression of quantity", 
+         40)) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 *What do you see in terms of fit?*
-The fit is better when there are more explanatory variables included in the model. The R-squared value with more variables is **`r Rsquared12`** which is higher than the R-squared value when qu is regressed on only price and a constant, **`r Rsquared10`**.
+The fit is better when there are more explanatory variables included in the model. The R-squared value with more variables is **`r Rsquared12`** which is higher than the R-squared value when qu is regressed on only price and a constant, **`r Rsquared10`**. However, we also know that R-squared is strictly increasing as we add more predictors; from the lm model output, we can see that the adjusted R-squared has also increased slightly compared to question 10 (0.106 vs 0.111). 
+
+From the fitted vs. true plot, we can see that there is a cluster of points around the lower true values, indicating that the model is capable of closely predicting lower quantities. For higher true values of quantity, there are greater discrepancies between the fitted and true values. The model seems to underpredict quantities as the true values rise, indicated by several points lying above the 45-degree line.
 
 
 ```{r plot residuals from multivariate linear regression}
 # Plot residuals against fuel efficiency
-plot(x = my_data$fuel, # fuel efficiency on x-axis
-     y = e12, # residuals on y-axis
-     xlab = "Fuel Efficiency (liter per km)",
-     ylab = "Residuals",
-     main = str_wrap("Residuals vs. fuel efficiency from multivariate linear regression of quantity", 40))
+ggplot() +
+  # fuel efficiency on x-axis, residuals on y-axis
+  geom_point(aes(x = my_data$fuel, y = e12)) +
+  labs(x = "Fuel Efficiency (liter per km)",
+       y = "Residuals",
+       title = str_wrap("Residuals vs. fuel efficiency from multivariate linear regression of quantity", 40)) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 
-# TODO is the constant variance assumption for the residuals valid or not? ####
 ```
 
 *Is the constant variance assumption for the residuals valid or not?*
+
+The residuals are mostly clustered around the zero line for the majority of the fuel efficiency values. Most of the residuals are evenly spread across the range of fuel efficiency, which suggests that the constant variance assumption (homoscedasticity) might hold. However, the presence of a few points with large residuals could be a cause for concern and warrant further investigation. 
 
 # Question 13
 

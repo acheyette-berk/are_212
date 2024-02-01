@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.23)  1 FEB 2024 10:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.23)  1 FEB 2024 10:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -382,6 +382,9 @@ LaTeX Warning: Label `' multiply defined.
 
 LaTeX Warning: Label `' multiply defined.
 
+
+LaTeX Warning: Label `' multiply defined.
+
 )
 \openout1 = `are212_ps2.aux'.
 
@@ -641,47 +644,50 @@ Package pdftex.def Info: are212_ps2_files/figure-latex/plot residuals vs observ
 ed-1.pdf  used on input line 866.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
 [17 <./are212_ps2_files/figure-latex/plot residuals vs observed-1.pdf>] [18] [1
-9]
-<are212_ps2_files/figure-latex/multivariate linear regression-1.pdf, id=203, 43
-6.63126pt x 292.09125pt>
-File: are212_ps2_files/figure-latex/multivariate linear regression-1.pdf Graphi
-c file (type pdf)
-<use are212_ps2_files/figure-latex/multivariate linear regression-1.pdf>
-Package pdftex.def Info: are212_ps2_files/figure-latex/multivariate linear regr
-ession-1.pdf  used on input line 1131.
-(pdftex.def)             Requested size: 436.63019pt x 292.09052pt.
-[20]
+9] [20] [21]
+<are212_ps2_files/figure-latex/plot fitted vs true multivariate-1.pdf, id=212, 
+459.7175pt x 313.17pt>
+File: are212_ps2_files/figure-latex/plot fitted vs true multivariate-1.pdf Grap
+hic file (type pdf)
+<use are212_ps2_files/figure-latex/plot fitted vs true multivariate-1.pdf>
+Package pdftex.def Info: are212_ps2_files/figure-latex/plot fitted vs true mult
+ivariate-1.pdf  used on input line 1193.
+(pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
 <are212_ps2_files/figure-latex/plot residuals from multivariate linear regressi
-on-1.pdf, id=208, 436.63126pt x 302.12875pt>
+on-1.pdf, id=213, 459.7175pt x 315.1775pt>
 File: are212_ps2_files/figure-latex/plot residuals from multivariate linear reg
 ression-1.pdf Graphic file (type pdf)
 <use are212_ps2_files/figure-latex/plot residuals from multivariate linear regr
 ession-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/plot residuals from mult
-ivariate linear regression-1.pdf  used on input line 1150.
-(pdftex.def)             Requested size: 436.63019pt x 302.128pt.
-[21 <./are212_ps2_files/figure-latex/multivariate linear regression-1.pdf>] [22
- <./are212_ps2_files/figure-latex/plot residuals from multivariate linear regre
-ssion-1.pdf>] [23]
-<are212_ps2_files/figure-latex/regress logs-1.pdf, id=241, 436.63126pt x 294.09
+ivariate linear regression-1.pdf  used on input line 1225.
+(pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
+[22 <./are212_ps2_files/figure-latex/plot fitted vs true multivariate-1.pdf>] [
+23 <./are212_ps2_files/figure-latex/plot residuals from multivariate linear reg
+ression-1.pdf>]
+Overfull \vbox (1.20395pt too high) detected at line 1355
+ []
+
+[24]
+<are212_ps2_files/figure-latex/regress logs-1.pdf, id=244, 436.63126pt x 294.09
 875pt>
 File: are212_ps2_files/figure-latex/regress logs-1.pdf Graphic file (type pdf)
 <use are212_ps2_files/figure-latex/regress logs-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/regress logs-1.pdf  used
- on input line 1346.
+ on input line 1428.
 (pdftex.def)             Requested size: 436.63019pt x 294.09802pt.
-[24] [25 <./are212_ps2_files/figure-latex/regress logs-1.pdf>] [26] (./are212_p
+[25] [26 <./are212_ps2_files/figure-latex/regress logs-1.pdf>] [27] (./are212_p
 s2.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 14240 strings out of 476025
- 229661 string characters out of 5790017
+ 14246 strings out of 476025
+ 229731 string characters out of 5790017
  1893388 words of memory out of 5000000
  34276 multiletter control sequences out of 15000+600000
- 565946 words of font info for 128 fonts, out of 8000000 for 9000
+ 566112 words of font info for 130 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  77i,10n,81p,1007b,714s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/lo
@@ -696,10 +702,10 @@ xlive/2023/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/local/texlive/2023/
 texmf-dist/fonts/type1/public/lm/lmtk10.pfb></usr/local/texlive/2023/texmf-dist
 /fonts/type1/public/lm/lmtt10.pfb></usr/local/texlive/2023/texmf-dist/fonts/typ
 e1/public/lm/lmtti10.pfb>
-Output written on are212_ps2.pdf (26 pages, 407457 bytes).
+Output written on are212_ps2.pdf (27 pages, 410777 bytes).
 PDF statistics:
- 391 PDF objects out of 1000 (max. 8388607)
- 296 compressed objects within 3 object streams
- 61 named destinations out of 1000 (max. 500000)
+ 394 PDF objects out of 1000 (max. 8388607)
+ 298 compressed objects within 3 object streams
+ 63 named destinations out of 1000 (max. 500000)
  28853 words of extra memory for PDF output out of 29859 (max. 10000000)
 
