@@ -260,7 +260,7 @@ e <- M_1%*%y1
 # plot fitted (predicted) vs. true (observed) quantities
 ggplot() +
   # True values on x-axis, fitted values on y-axis
-  geom_point(aes(x = y1, y = y1_hat)) +
+  geom_point(aes(x = x, y = y1_hat)) +
   labs(x = "True Values",
        y = "Model Fitted Values",
        title = str_wrap( 
@@ -269,14 +269,14 @@ ggplot() +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 
-# plot residuals vs. true (observed) quantities
+# plot residuals vs. price
 ggplot() +
   # True values on x-axis, residuals on y-axis
-  geom_point(aes(x = y1, y = e)) +
-  labs(x = "True Values",
-       y = "Residuals",
+  geom_point(aes(x = x, y = e)) +
+  labs(x = "Price",
+       y = "Residuals (Quantity)",
        title = str_wrap( 
-         "Residuals vs. true values for regression of quantity on price (no constant)", 
+         "Residuals vs. price for regression of quantity on price (no constant)", 
          40)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
@@ -359,15 +359,15 @@ ggplot() +
 
 ```
 
-```{r plot residuals vs observed}
-# plot residuals vs. true (observed) quantities
+```{r plot residuals vs price}
+# plot residuals vs. price
 ggplot() +
-  # True values on x-axis, residuals on y-axis
-  geom_point(aes(x = y10, y = e10)) +
-  labs(x = "True Values",
-       y = "Residuals",
+  # Price on x-axis, residuals on y-axis
+  geom_point(aes(x = x, y = e10)) +
+  labs(x = "Price",
+       y = "Residuals (Quantity)",
        title = str_wrap( 
-         "Residuals vs. true values for regression of quantity on price with constant", 
+         "Residuals vs. price for regression of quantity on price with constant", 
          40)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
