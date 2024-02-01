@@ -631,12 +631,14 @@ Rsquared
 
 # Generate series of predicted logqu values and plot against logprice
 y14_hat <- P%*%y14
-plot(x = my_data$logprice, # logprice
-     y = y14_hat, # fitted logqu values on y-axis
-     xlab = "Log of Price",
-     ylab = "Log of Quantity (Predicted)",
-     main = str_wrap("Log of Quantity (Predicted) vs. Log of Price from Regression in Logs", 40))
-
+ggplot() +
+  # logprice on x-axis, fitted logqu on y-axis
+  geom_point(aes(x = my_data$logprice, y = y14_hat)) +
+  labs(x = "Log of Price",
+       y = "Log of Quantity (Predicted)",
+       title = str_wrap("Log of Quantity (Predicted) vs. Log of Price from Regression in Logs", 40)) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 

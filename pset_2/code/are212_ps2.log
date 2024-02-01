@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.23)  1 FEB 2024 10:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.23)  1 FEB 2024 10:53
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -668,13 +668,13 @@ ivariate linear regression-1.pdf  used on input line 1225.
 [22 <./are212_ps2_files/figure-latex/plot fitted vs true multivariate-1.pdf>] [
 23 <./are212_ps2_files/figure-latex/plot residuals from multivariate linear reg
 ression-1.pdf>] [24] [25]
-<are212_ps2_files/figure-latex/regress logs-1.pdf, id=250, 436.63126pt x 294.09
-875pt>
+<are212_ps2_files/figure-latex/regress logs-1.pdf, id=250, 462.72874pt x 315.17
+75pt>
 File: are212_ps2_files/figure-latex/regress logs-1.pdf Graphic file (type pdf)
 <use are212_ps2_files/figure-latex/regress logs-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/regress logs-1.pdf  used
- on input line 1485.
-(pdftex.def)             Requested size: 436.63019pt x 294.09802pt.
+ on input line 1489.
+(pdftex.def)             Requested size: 462.73466pt x 315.18153pt.
 [26] [27 <./are212_ps2_files/figure-latex/regress logs-1.pdf>] [28] (./are212_p
 s2.aux)
 
@@ -682,11 +682,11 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 14248 strings out of 476025
- 229745 string characters out of 5790017
+ 14246 strings out of 476025
+ 229721 string characters out of 5790017
  1893388 words of memory out of 5000000
  34276 multiletter control sequences out of 15000+600000
- 566112 words of font info for 130 fonts, out of 8000000 for 9000
+ 565982 words of font info for 129 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  77i,10n,81p,1007b,714s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/lo
@@ -701,10 +701,10 @@ xlive/2023/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/local/texlive/2023/
 texmf-dist/fonts/type1/public/lm/lmtk10.pfb></usr/local/texlive/2023/texmf-dist
 /fonts/type1/public/lm/lmtt10.pfb></usr/local/texlive/2023/texmf-dist/fonts/typ
 e1/public/lm/lmtti10.pfb>
-Output written on are212_ps2.pdf (28 pages, 412920 bytes).
+Output written on are212_ps2.pdf (28 pages, 413169 bytes).
 PDF statistics:
- 400 PDF objects out of 1000 (max. 8388607)
- 302 compressed objects within 4 object streams
+ 399 PDF objects out of 1000 (max. 8388607)
+ 301 compressed objects within 4 object streams
  65 named destinations out of 1000 (max. 500000)
  28853 words of extra memory for PDF output out of 29859 (max. 10000000)
 
