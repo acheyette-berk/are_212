@@ -18,6 +18,8 @@ knitr::opts_chunk$set(echo = TRUE)
 # Comment out after installing
 # install.packages("pacman")
 
+options(scipen = 999)
+
 # Load packages
 library(pacman)
 p_load(tidyverse, haven, readr, knitr, psych, ggplot2,stats4, stargazer,
@@ -245,10 +247,7 @@ The fact that we are able to get the same R-squared values across both regressio
 
 # Question 9
 
-- sample size, n = 57
-- number of explanatory variables, k = 1
-- degrees of freedom, n - k = 56
-- estimate of coefficient, b = 591.1
+
 ```{r regression quantity on price}
 # regression of quantity on price
 # get degrees of freedom, coefficient, and sample size
@@ -259,25 +258,44 @@ y1_hat <- P_1%*%y1
 e <- M_1%*%y1
 
 # plot fitted (predicted) vs. true (observed) quantities
-plot(x = y1, # True values on x-axis
-     y = y1_hat, # fitted values on y-axis
-     xlab = "True Values",
-     ylab = "Model Fitted Values",
-     main = str_wrap("Fitted vs. true values for regression of quantity on price (no constant)", 40))
+ggplot() +
+  # True values on x-axis, fitted values on y-axis
+  geom_point(aes(x = y1, y = y1_hat)) +
+  labs(x = "True Values",
+       y = "Model Fitted Values",
+       title = str_wrap( 
+         "Fitted vs. true values for regression of quantity on price (no constant)", 
+         40)) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 
 # plot residuals vs. true (observed) quantities
-plot(x = y1, # True values on x-axis
-     y = e, # residuals on y-axis
-     xlab = "True Values",
-     ylab = "Residuals",
-     main = str_wrap("Residuals vs. true values for regression of quantity on price (no constant)", 40))
-
-# TODO explain why constant variance assumption is or isn't valid ####
+ggplot() +
+  # True values on x-axis, residuals on y-axis
+  geom_point(aes(x = y1, y = e)) +
+  labs(x = "True Values",
+       y = "Residuals",
+       title = str_wrap( 
+         "Residuals vs. true values for regression of quantity on price (no constant)", 
+         40)) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 
 ```
+
+- sample size, n = `r length(x)`
+- number of explanatory variables, k = 1
+- degrees of freedom, n - k = `r length(x) - 1`
+- estimate of coefficient, b = `r b1`
+
 *What do you see in terms of fit and whether the constant variance assumption for the residuals is valid or not?*
-There appears to be a positive linear relationship between the quantity and the residual.
-Constant variance assumption is not valid because **<ADD REASONING>**.
+In the fitted vs. true values plot, we can see that the points do *not* fall along the 45 degree line. If our model had perfect predictive power, we would see the points falling along the 45-degree line. In our plot, it appears that the model predicts lower values relatively well but significantly underestimates the quantity as the true value increases.
+
+There appears to be a positive linear relationship between the quantity and the residual. 
+
+The key assumption of constant variance (homoscedasticity) in linear regression is that the residuals should be spread randomly around zero, with no clear pattern, and their spread should not change systematically across the range of observed values.
+
+In this plot, the residuals increase with the true values, suggesting that the variance of the residuals is not constant — it grows with the level of the dependent variable. This pattern of increasing spread is indicative of heteroscedasticity, which violates the assumption of constant variance in the residuals.
 
 # Question 10
 
