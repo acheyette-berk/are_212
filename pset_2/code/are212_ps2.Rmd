@@ -153,16 +153,6 @@ e_1 <- M_1%*%y1
 SSR_1 <- t(e_1)%*%e_1
 SSR_1
 
-# construct demeaner
-#i <- c(rep(1,57))
-#M0 <- diag(57)-i%*%t(i)*(1/57)
-#M0 <- diag(57)-i%*%solve(t(i)%*%i)%*%t(i)
-# # demeaned y
-# M0y <- M0%*%y1
-# # total sum of squares
-# SST_1 <- t(M0y)%*%M0y
-# SST_1
-
 # calculate SST as the sum of the squared values of the dependent
 # variable, not relative to its mean bc we do not have a constant.
 SST_1 <- t(y1) %*% y1
@@ -184,15 +174,7 @@ M_2 <- diag(57)-P_2
 e_2 <- M_2%*%y2
 SSR_2 <- t(e_2)%*%e_2
 SSR_2
-# construct demeaner
-# i <- c(rep(1,57))
-#M0 <- diag(length(y))-i%*%t(i)*(1/length(y))
-# M0 <- diag(57)-i%*%solve(t(i)%*%i)%*%t(i)
-# # demeaned y
-# M0y <- M0%*%y2
-# total sum of squares
-# SST_2 <- t(M0y)%*%M0y
-# SST_2
+
 # calculate SST as the sum of the squared values of the dependent
 # variable, not relative to its mean bc we do not have a constant.
 SST_2 <- t(y2) %*% y2
