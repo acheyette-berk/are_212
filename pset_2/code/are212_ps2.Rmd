@@ -243,7 +243,7 @@ The coefficients (b1 and b2) are different but the R-squared values are the same
 
 Note that finding R-squared without a constant is inherently problematic because it assumes that SST is computed relative to the mean of the dependent variable. For models without an intercept, we replicate what the `lm` function does here by calculating SST as the sum of the squared values of the dependent variable, not relative to its mean. However, this means that this R-squared is no longer a proportion of variation explained.
 
-Furthermore, because the R-squared values are the same for regression of $y_1$ on $x$ and regression of $y_2$ on $x$, this suggests that unless $y_1$ and $y_2$ are perfectly correlated (i.e. $y_2$ is linear in $y_1_$), this method of calculating R-squared does not depend on the variation in $y$ and only depends on the variation in $x$.
+Furthermore, because the R-squared values are the same for regression of $y_1$ on $x$ and regression of $y_2$ on $x$, this suggests that unless $y_1$ and $y_2$ are perfectly correlated (i.e. $y_2$ is linear in $y_1$), this method of calculating R-squared does not depend on the variation in $y$ and only depends on the variation in $x$.
 
 
 # Question 9
