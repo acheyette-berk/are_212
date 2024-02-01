@@ -172,8 +172,7 @@ P_1 <- x%*%solve(t(x)%*%x)%*%t(x)
 M_1 <- diag(57)-P_1
 # sum of squared residuals, SSR=e'e
 e_1 <- M_1%*%y1
-#e <- y1-x%*%b1
-SSR_1 <- t(e_1)%*%e_1
+SSR_1 <- t(e_1) %*% e_1
 
 
 # calculate SST as the sum of the squared values of the dependent
@@ -187,10 +186,11 @@ Rsquared_1
 # Regress carspc on price without constant
 y2 <- my_data$carspc
 # find coefficient
-b2 <- solve(t(x)%*%x)%*%t(x)%*%y2
+b2 <- solve(t(x) %*% x) %*% t(x) %*% y2
 
 # projection matrix of reg y2 on x
-P_2 <- x%*%solve(t(x)%*%x)%*%t(x)
+P_2 <- x %*% solve(t(x) %*% x) %*% t(x)
+
 # residual maker of reg y2 on x: M= I - P
 M_2 <- diag(57)-P_2
 # sum of squared residuals, SSR=e'e
@@ -201,6 +201,7 @@ SSR_2 <- t(e_2)%*%e_2
 # calculate SST as the sum of the squared values of the dependent
 # variable, not relative to its mean bc we do not have a constant.
 SST_2 <- t(y2) %*% y2
+
 # calculate R squared
 Rsquared_2 <- 1-(SSR_2/SST_2)
 Rsquared_2
@@ -218,7 +219,7 @@ stargazer(Reg1,
           dep.var.caption = "Dependent Variable: Quantity (New Car Registrations)",
           covariate.labels = "Price in Thousands of Euros",
           header = FALSE,
-          title = "Effect of Price on Quantity - No Constant")
+          title = "Effect of Price on Quantity - No Constant - Regression Using lm() Function")
 
 Reg2 <- lm(carspc~price-1,my_data)
 stargazer(Reg2,
@@ -226,7 +227,7 @@ stargazer(Reg2,
           dep.var.caption = "Dependent Variable: Cars per Capita",
           covariate.labels = "Price in Thousands of Euros",
           header = FALSE,
-          title = "Effect of Price on Cars per Capity - No Constant")
+          title = "Effect of Price on Cars per Capity - No Constant - Regression Using lm() Function")
 ```
 *Report the coefficient on price and compare it to the previous coefficient. Check if they are different in R using all.equal(). Explain your findings.*
 
@@ -234,9 +235,13 @@ The coefficient of quantity regressed on price without a constant is **`r b1`** 
 
 The coefficient of cars per capita regressed on price without a constant is **`r b2`** and the R squared is **`r Rsquared_2`**.
 
-The coefficients are different but the R-squared values are the same.
+We are able to find the same coefficients and R-squared values using matrix algebra as with the canned `lm()` function. 
+
+The coefficients (b1 and b2) are different but the R-squared values are the same.
 
 Note that finding R-squared without a constant is inherently problematic because it assumes that SST is computed relative to the mean of the dependent variable. For models without an intercept, we replicate what the `lm` function does here by calculating SST as the sum of the squared values of the dependent variable, not relative to its mean. 
+
+The fact that we are able to get the same R-squared values across both regressions indicates how problematic relying on R^2 for regressions without an intercept can be. The fact that both models have the same R-squared value but vastly different coefficients suggests that while the proportion of explained variability is similar, the nature of the relationship between the independent variable (price) and each dependent variable is different. Price has a much more pronounced effect on the quantity of new car registrations than on cars per capita.
 
 # Question 9
 
