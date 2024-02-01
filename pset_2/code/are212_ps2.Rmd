@@ -86,7 +86,9 @@ histqu <- ggplot(my_data, aes(x=qu)) + geom_histogram(bins=15)
 (histqu <- histqu + 
     xlab("Quantity") + 
     ylab("Number of Observations") + 
-    ggtitle("Histogram of Quantity"))
+    ggtitle(str_wrap("Histogram of Quantity of New Car Registrations", 40)) +
+    theme_minimal() +
+    theme(plot.title = element_text(hjust = 0.5)))
 
 ```
 
@@ -94,19 +96,37 @@ histqu <- ggplot(my_data, aes(x=qu)) + geom_histogram(bins=15)
 
 ```{r histogram of cars pc}
 # Make a histogram of carspc
-histcarspcvertical <- hist(my_data$carspc, main="Histogram of Cars per Capita", xlab="Cars per Capita")
-abline(v=0.002, col="blue", lwd=3)
+histcarspcvertical <- 
+  ggplot(my_data, aes(carspc)) +
+  geom_histogram(bins = 20) +
+  geom_vline(xintercept = 0.002, color = "red") +
+  geom_label(x = 0.002, y = 26, label = "0.002 Cars per Person", color = "red") +
+  labs(title = "Cars per Capita Distribution",
+       x = "Cars per Capita in US", y = "Count") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
 histcarspcvertical
 ```
 
 # Question 5
 
-```{r scatter plot}
+```{r scatter plots}
 # Make scatter plots of price vs. qu and logprice vs. logqu
 scatter <- ggplot(my_data, aes(x=price, y=qu)) + geom_point()
-(scatter <- scatter + xlab("Price") + ylab("Quantity") + ggtitle("Scatter Plot of Quantity vs. Price"))
+(scatter <- 
+    scatter + 
+    xlab("Price") + 
+    ylab("Quantity") + 
+    ggtitle("Scatter Plot of Quantity vs. Price"))
+
+
 scatter_logs <- ggplot(my_data, aes(x=logprice, y=logqu)) + geom_point()
-(scatter_logs <- scatter_logs + xlab("Log of Price") + ylab("Log of Quantity") + ggtitle("Scatter Plot of Log of Quantity vs. Log of Price"))
+(scatter_logs <- 
+    scatter_logs + 
+    xlab("Log of Price") + 
+    ylab("Log of Quantity") + 
+    ggtitle("Scatter Plot of Log of Quantity vs. Log of Price"))
 
 ```
 
@@ -117,9 +137,12 @@ dataluxury <- filter(my_data, luxury==1)
 datanoluxury <- filter(my_data, luxury==0)
 
 # Make overlapping histograms for luxury and non-luxury
-histprice_luxnolux <- ggplot() +
-  geom_density(data=dataluxury, aes(x=price, fill="r")) +
-  geom_density(data=datanoluxury, aes(x=price, fill="g")) +
+histprice_luxnolux <- 
+  ggplot() +
+  geom_density(data=dataluxury, 
+               aes(x=price, fill="r"), alpha = 0.8) +
+  geom_density(data=datanoluxury, 
+               aes(x=price, fill="g"), alpha = 0.8) +
   scale_fill_manual(name="Luxury", values=c("r"="red", "g"="green"),
                     labels=c("r"="Luxury Models", "g"="Non-Luxury Models"))
 histprice_luxnolux
@@ -142,7 +165,7 @@ x <- my_data$price
 y1 <- my_data$qu
 # find coefficient
 b1 <- solve(t(x) %*% x) %*% t(x) %*% y1
-b1
+
 # projection matrix of reg y1 on x
 P_1 <- x%*%solve(t(x)%*%x)%*%t(x)
 # residual maker of reg y1 on x: M= I - P
@@ -151,7 +174,7 @@ M_1 <- diag(57)-P_1
 e_1 <- M_1%*%y1
 #e <- y1-x%*%b1
 SSR_1 <- t(e_1)%*%e_1
-SSR_1
+
 
 # calculate SST as the sum of the squared values of the dependent
 # variable, not relative to its mean bc we do not have a constant.
@@ -165,7 +188,7 @@ Rsquared_1
 y2 <- my_data$carspc
 # find coefficient
 b2 <- solve(t(x)%*%x)%*%t(x)%*%y2
-b2
+
 # projection matrix of reg y2 on x
 P_2 <- x%*%solve(t(x)%*%x)%*%t(x)
 # residual maker of reg y2 on x: M= I - P
@@ -173,7 +196,7 @@ M_2 <- diag(57)-P_2
 # sum of squared residuals, SSR=e'e
 e_2 <- M_2%*%y2
 SSR_2 <- t(e_2)%*%e_2
-SSR_2
+
 
 # calculate SST as the sum of the squared values of the dependent
 # variable, not relative to its mean bc we do not have a constant.
@@ -183,10 +206,10 @@ Rsquared_2 <- 1-(SSR_2/SST_2)
 Rsquared_2
 
 # compare coefficients
-all.equal(b1,b2)
+all.equal(b1, b2)
 
 # compare Rsquared
-all.equal(Rsquared_1,Rsquared_2)
+all.equal(Rsquared_1, Rsquared_2)
 
 # compare to lm regression
 Reg1 <- lm(qu~price-1,my_data)
@@ -205,7 +228,7 @@ stargazer(Reg2,
           header = FALSE,
           title = "Effect of Price on Cars per Capity - No Constant")
 ```
-*Report the coefficient on price and compare it to the previous coefficient. Check if they are different in R using all.equal() . Explain your findings.*
+*Report the coefficient on price and compare it to the previous coefficient. Check if they are different in R using all.equal(). Explain your findings.*
 
 The coefficient of quantity regressed on price without a constant is **`r b1`** and the R squared is **`r Rsquared_1`**.
 
