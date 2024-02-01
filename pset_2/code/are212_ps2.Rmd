@@ -120,7 +120,9 @@ scatter <- ggplot(my_data, aes(x=price, y=qu)) + geom_point()
     scatter + 
     xlab("Price") + 
     ylab("Quantity") + 
-    ggtitle("Scatter Plot of Quantity vs. Price"))
+    ggtitle("Scatter Plot of Quantity vs. Price") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)))
 
 
 scatter_logs <- ggplot(my_data, aes(x=logprice, y=logqu)) + geom_point()
@@ -128,7 +130,9 @@ scatter_logs <- ggplot(my_data, aes(x=logprice, y=logqu)) + geom_point()
     scatter_logs + 
     xlab("Log of Price") + 
     ylab("Log of Quantity") + 
-    ggtitle("Scatter Plot of Log of Quantity vs. Log of Price"))
+    ggtitle("Scatter Plot of Log of Quantity vs. Log of Price") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)))
 
 ```
 
@@ -146,7 +150,12 @@ histprice_luxnolux <-
   geom_density(data=datanoluxury, 
                aes(x=price, fill="g"), alpha = 0.8) +
   scale_fill_manual(name="Luxury", values=c("r"="red", "g"="green"),
-                    labels=c("r"="Luxury Models", "g"="Non-Luxury Models"))
+                    labels=c("r"="Luxury Models", "g"="Non-Luxury Models")) +
+  labs(x = "Price", y = "Density", 
+       title = str_wrap("Density of Price for Luxury vs. Non-Luxury Cars", 40)) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
 histprice_luxnolux
 
 ```
@@ -438,6 +447,7 @@ stargazer(Reg10, Reg11,
 
 ```
 *Compare to analysis in question 10. Why do you get this? Explain the theorem behind this briefly.*
+
 We get the same coefficient for qu in 10 and dmeanqu in 11.
 We also get the same Rsquared for 10 and 11.
 The coefficients are the same because the slopes in a regression that contains a constant term are obtained by demeaning the other explanatory variables and the dependent variable and then regressing the demeaned dependent on the demeaned explanatory variables. (See Corollary 3.2.2 in Greene.)
@@ -499,6 +509,7 @@ ggplot() +
        title = str_wrap(
          "Fitted vs. true values for multivariate linear regression of quantity", 
          40)) +
+  ylim(NA, max(my_data$qu)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 ```

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.23)  1 FEB 2024 10:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.23)  1 FEB 2024 14:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -569,7 +569,7 @@ File: are212_ps2_files/figure-latex/scatter plots-1.pdf Graphic file (type pdf)
 
 <use are212_ps2_files/figure-latex/scatter plots-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/scatter plots-1.pdf  use
-d on input line 405.
+d on input line 407.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
 [6 <./are212_ps2_files/figure-latex/histogram of cars pc-1.pdf>]
 <are212_ps2_files/figure-latex/scatter plots-2.pdf, id=65, 462.72874pt x 315.17
@@ -578,20 +578,20 @@ File: are212_ps2_files/figure-latex/scatter plots-2.pdf Graphic file (type pdf)
 
 <use are212_ps2_files/figure-latex/scatter plots-2.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/scatter plots-2.pdf  use
-d on input line 418.
+d on input line 422.
 (pdftex.def)             Requested size: 462.73466pt x 315.18153pt.
 [7 <./are212_ps2_files/figure-latex/scatter plots-1.pdf>]
 <are212_ps2_files/figure-latex/histogram of luxury vs no luxury-1.pdf, id=78, 4
-53.695pt x 315.1775pt>
+53.695pt x 313.17pt>
 File: are212_ps2_files/figure-latex/histogram of luxury vs no luxury-1.pdf Grap
 hic file (type pdf)
 <use are212_ps2_files/figure-latex/histogram of luxury vs no luxury-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/histogram of luxury vs n
-o luxury-1.pdf  used on input line 442.
-(pdftex.def)             Requested size: 453.6939pt x 315.17673pt.
+o luxury-1.pdf  used on input line 451.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
 [8 <./are212_ps2_files/figure-latex/scatter plots-2.pdf>]
 LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-469.
+478.
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [9{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc} <./are21
@@ -604,7 +604,7 @@ File: are212_ps2_files/figure-latex/regression quantity on price-1.pdf Graphic
 file (type pdf)
 <use are212_ps2_files/figure-latex/regression quantity on price-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/regression quantity on p
-rice-1.pdf  used on input line 676.
+rice-1.pdf  used on input line 685.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
 [12]
 <are212_ps2_files/figure-latex/regression quantity on price-2.pdf, id=132, 459.
@@ -613,48 +613,51 @@ File: are212_ps2_files/figure-latex/regression quantity on price-2.pdf Graphic
 file (type pdf)
 <use are212_ps2_files/figure-latex/regression quantity on price-2.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/regression quantity on p
-rice-2.pdf  used on input line 694.
+rice-2.pdf  used on input line 703.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
 [13 <./are212_ps2_files/figure-latex/regression quantity on price-1.pdf>]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 6
-99.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 7
+08.
 (/usr/local/texlive/2023/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-Overfull \vbox (1.2445pt too high) detected at line 745
+Overfull \vbox (0.41228pt too high) detected at line 756
  []
 
-[14 <./are212_ps2_files/figure-latex/regression quantity on price-2.pdf>]
-<are212_ps2_files/figure-latex/plot fitted vs true-1.pdf, id=160, 459.7175pt x 
+[14 <./are212_ps2_files/figure-latex/regression quantity on price-2.pdf>] [15]
+<are212_ps2_files/figure-latex/plot fitted vs true-1.pdf, id=164, 459.7175pt x 
 313.17pt>
 File: are212_ps2_files/figure-latex/plot fitted vs true-1.pdf Graphic file (typ
 e pdf)
 <use are212_ps2_files/figure-latex/plot fitted vs true-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/plot fitted vs true-1.pd
-f  used on input line 848.
+f  used on input line 860.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
-[15]
-Underfull \vbox (badness 10000) detected at line 864
+
+Underfull \vbox (badness 2913) detected at line 876
  []
 
 [16 <./are212_ps2_files/figure-latex/plot fitted vs true-1.pdf>]
-<are212_ps2_files/figure-latex/plot residuals vs observed-1.pdf, id=177, 459.71
-75pt x 313.17pt>
-File: are212_ps2_files/figure-latex/plot residuals vs observed-1.pdf Graphic fi
-le (type pdf)
-<use are212_ps2_files/figure-latex/plot residuals vs observed-1.pdf>
-Package pdftex.def Info: are212_ps2_files/figure-latex/plot residuals vs observ
-ed-1.pdf  used on input line 866.
+<are212_ps2_files/figure-latex/plot residuals vs price-1.pdf, id=177, 459.7175p
+t x 313.17pt>
+File: are212_ps2_files/figure-latex/plot residuals vs price-1.pdf Graphic file 
+(type pdf)
+<use are212_ps2_files/figure-latex/plot residuals vs price-1.pdf>
+Package pdftex.def Info: are212_ps2_files/figure-latex/plot residuals vs price-
+1.pdf  used on input line 878.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
-[17 <./are212_ps2_files/figure-latex/plot residuals vs observed-1.pdf>] [18] [1
-9] [20] [21]
+[17 <./are212_ps2_files/figure-latex/plot residuals vs price-1.pdf>] [18] [19]
+Overfull \vbox (2.18915pt too high) detected at line 1204
+ []
+
+[20] [21]
 <are212_ps2_files/figure-latex/plot fitted vs true multivariate-1.pdf, id=212, 
 459.7175pt x 313.17pt>
 File: are212_ps2_files/figure-latex/plot fitted vs true multivariate-1.pdf Grap
 hic file (type pdf)
 <use are212_ps2_files/figure-latex/plot fitted vs true multivariate-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/plot fitted vs true mult
-ivariate-1.pdf  used on input line 1193.
+ivariate-1.pdf  used on input line 1206.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
 <are212_ps2_files/figure-latex/plot residuals from multivariate linear regressi
 on-1.pdf, id=213, 459.7175pt x 315.1775pt>
@@ -663,7 +666,7 @@ ression-1.pdf Graphic file (type pdf)
 <use are212_ps2_files/figure-latex/plot residuals from multivariate linear regr
 ession-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/plot residuals from mult
-ivariate linear regression-1.pdf  used on input line 1225.
+ivariate linear regression-1.pdf  used on input line 1238.
 (pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
 [22 <./are212_ps2_files/figure-latex/plot fitted vs true multivariate-1.pdf>] [
 23 <./are212_ps2_files/figure-latex/plot residuals from multivariate linear reg
@@ -673,7 +676,7 @@ ression-1.pdf>] [24] [25]
 File: are212_ps2_files/figure-latex/regress logs-1.pdf Graphic file (type pdf)
 <use are212_ps2_files/figure-latex/regress logs-1.pdf>
 Package pdftex.def Info: are212_ps2_files/figure-latex/regress logs-1.pdf  used
- on input line 1489.
+ on input line 1502.
 (pdftex.def)             Requested size: 462.73466pt x 315.18153pt.
 [26] [27 <./are212_ps2_files/figure-latex/regress logs-1.pdf>] [28] (./are212_p
 s2.aux)
@@ -682,11 +685,11 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 14246 strings out of 476025
- 229721 string characters out of 5790017
+ 14243 strings out of 476025
+ 229661 string characters out of 5790017
  1893388 words of memory out of 5000000
- 34276 multiletter control sequences out of 15000+600000
- 565982 words of font info for 129 fonts, out of 8000000 for 9000
+ 34275 multiletter control sequences out of 15000+600000
+ 565852 words of font info for 128 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  77i,10n,81p,1007b,714s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/lo
@@ -701,7 +704,7 @@ xlive/2023/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/local/texlive/2023/
 texmf-dist/fonts/type1/public/lm/lmtk10.pfb></usr/local/texlive/2023/texmf-dist
 /fonts/type1/public/lm/lmtt10.pfb></usr/local/texlive/2023/texmf-dist/fonts/typ
 e1/public/lm/lmtti10.pfb>
-Output written on are212_ps2.pdf (28 pages, 413169 bytes).
+Output written on are212_ps2.pdf (28 pages, 413442 bytes).
 PDF statistics:
  399 PDF objects out of 1000 (max. 8388607)
  301 compressed objects within 4 object streams
