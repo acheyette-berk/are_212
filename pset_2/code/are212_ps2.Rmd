@@ -260,7 +260,7 @@ e <- M_1%*%y1
 # plot fitted (predicted) vs. true (observed) quantities
 ggplot() +
   # True values on x-axis, fitted values on y-axis
-  geom_point(aes(x = x, y = y1_hat)) +
+  geom_point(aes(x = y1, y = y1_hat)) +
   labs(x = "True Values",
        y = "Model Fitted Values",
        title = str_wrap( 
