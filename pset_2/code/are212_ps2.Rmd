@@ -49,8 +49,7 @@ my_data <-
 
 ```{r describe data}
 # Get summary statistics for data
-describe(my_data)
-
+describe(my_data[c("qu", "price", "logqu", "logprice")])
 ```
 
 ```{r summarize data, results='asis'}
@@ -86,9 +85,9 @@ whole
 # Make a histogram of qu
 histqu <- ggplot(my_data, aes(x=qu)) + geom_histogram(bins=15)
 (histqu <- histqu + 
-    xlab("Quantity") + 
+    xlab("Sales Quantity") + 
     ylab("Number of Observations") + 
-    ggtitle(str_wrap("Histogram of Quantity of New Car Registrations", 40)) +
+    ggtitle(str_wrap("Histogram of Quantity of New Car Sales", 40)) +
     theme_minimal() +
     theme(plot.title = element_text(hjust = 0.5)))
 
@@ -104,7 +103,7 @@ histcarspcvertical <-
   geom_vline(xintercept = 0.002, color = "red") +
   geom_label(x = 0.002, y = 26, label = "0.002 Cars per Person", color = "red") +
   labs(title = "Cars per Capita Distribution",
-       x = "Cars per Capita in US", y = "Count") +
+       x = "Cars per Capita", y = "Count") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 
@@ -118,9 +117,9 @@ histcarspcvertical
 scatter <- ggplot(my_data, aes(x=price, y=qu)) + geom_point()
 (scatter <- 
     scatter + 
-    xlab("Price") + 
-    ylab("Quantity") + 
-    ggtitle("Scatter Plot of Quantity vs. Price") +
+    xlab("Price (in 1000 Euros)") + 
+    ylab("Sales Quantity") + 
+    ggtitle("Scatter Plot of Car Sales Quantity vs. Price") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5)))
 
@@ -129,8 +128,8 @@ scatter_logs <- ggplot(my_data, aes(x=logprice, y=logqu)) + geom_point()
 (scatter_logs <- 
     scatter_logs + 
     xlab("Log of Price") + 
-    ylab("Log of Quantity") + 
-    ggtitle("Scatter Plot of Log of Quantity vs. Log of Price") +
+    ylab("Log of Sales Quantity") + 
+    ggtitle("Scatter Plot of Log of Car Sales Quantity vs. Log of Price") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5)))
 
@@ -151,8 +150,8 @@ histprice_luxnolux <-
                aes(x=price, fill="g"), alpha = 0.8) +
   scale_fill_manual(name="Luxury", values=c("r"="red", "g"="green"),
                     labels=c("r"="Luxury Models", "g"="Non-Luxury Models")) +
-  labs(x = "Price", y = "Density", 
-       title = str_wrap("Density of Price for Luxury vs. Non-Luxury Cars", 40)) +
+  labs(x = "Price (in 1000 Euros)", y = "Density", 
+       title = str_wrap("Density Plot of Price for Luxury vs. Non-Luxury Cars", 40)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 
@@ -192,7 +191,6 @@ SST_1 <- t(y1) %*% y1
 
 # calculate R squared
 Rsquared_1 <- 1-(SSR_1/SST_1)
-Rsquared_1
 
 # Regress carspc on price without constant
 y2 <- my_data$carspc
@@ -215,7 +213,6 @@ SST_2 <- t(y2) %*% y2
 
 # calculate R squared
 Rsquared_2 <- 1-(SSR_2/SST_2)
-Rsquared_2
 
 # compare coefficients
 all.equal(b1, b2)
@@ -257,6 +254,13 @@ Furthermore, because the R-squared values are the same for regression of $y_1$ o
 
 # Question 9
 
+*Get degrees of freedom (n-k), b (the coefficient), n from the regression of quantity on price and no constant.*
+
+- sample size, n = `r length(x)`
+- number of explanatory variables, k = 1
+- degrees of freedom, n - k = `r length(x) - 1`
+- estimate of coefficient, b = `r b1`
+
 
 ```{r regression quantity on price}
 # regression of quantity on price
@@ -294,14 +298,9 @@ ggplot() +
 
 ```
 
-- sample size, n = `r length(x)`
-- number of explanatory variables, k = 1
-- degrees of freedom, n - k = `r length(x) - 1`
-- estimate of coefficient, b = `r b1`
-
 *What do you see in terms of fit and whether the constant variance assumption for the residuals is valid or not?*
 
-In the fitted vs. true values plot, we can see that the points do *not* fall along the 45 degree line. If our model had perfect predictive power, we would see the points falling along the 45-degree line. In our plot, it appears that the model predicts lower values relatively well but significantly underestimates the quantity as the true value increases. In addition, the model's estimates for large values of quantity are extremely poor, although it is possible that these are outliers.
+In the fitted vs. true values plot, we can see that the points do *not* fall along the 45-degree line. If our model had perfect predictive power, we would see the points falling along the 45-degree line. In our plot, it appears that the model predicts lower values relatively well but significantly underestimates the quantity as the true value increases. In addition, the model's estimates for large values of quantity are extremely poor, although it is possible that these are outliers.
 
 There appears to be a positive linear relationship between the price and the residual. 
 
@@ -387,11 +386,11 @@ ggplot() +
 
 *What do you see in terms of fit and whether constant variance assumption for residuals is valid? Has the fit improved or not relative to the question 8 analysis?*
 
-Rsquared has increased compared to question 8.
+Rsquared is now **`r Rsquared10`**; this is an increase from **`r Rsquared_1`** in question 8.
 
 The fitted vs. true values plot shows that the data points still do not cluster as closely around a line as would be expected in a well-fitted model. There are also a few negative fitted values, which could be indicative of overfitting.
 
-In the residuals vs. prices plot, the spread of residuals is not constant and there is an upward trend, indicating potential heteroscedasticity. The spread of the residuals decreases as the price increases. In addition, the residuals appear to be centered around an upward-sloping line and not zero. This pattern suggests that the variance of the residuals is not constant.
+In the residuals vs. prices plot, the spread of residuals is not constant and there is an upward trend, indicating potential heteroscedasticity. The spread of the residuals decreases as the price increases. This pattern suggests that the variance of the residuals is not constant. In addition, the residuals appear to be centered around an upward-sloping line and not zero.
 
 The inclusion of a constant term does not seem to have notably improved the fit of the model. The points in the fitted vs. true values plot are still not aligning along a line indicating good prediction, and the residuals plot still exhibits a pattern suggesting heteroscedasticity. The presence of extreme values in the true values of quantity could be having a disproportionate effect on the model, which may explain the presence of negative fitted values and large residuals.
 
@@ -417,7 +416,6 @@ M <- diag(57)-P
 # sum of squared residuals, SSR = e'e
 e11 <- M%*%y11
 SSR <- t(e11)%*%e11
-SSR
 # construct demeaner
 i <- c(rep(1,57))
 M0 <- diag(57)-i%*%t(i)*(1/57)
@@ -425,7 +423,6 @@ M0 <- diag(57)-i%*%t(i)*(1/57)
 M0y <- M0%*%y11
 # total sum of squares
 SST <- t(M0y)%*%M0y
-SST
 # calculate R squared
 Rsquared11 <- 1-(SSR/SST)
 Rsquared11
@@ -433,8 +430,11 @@ Rsquared11
 y11_hat <- P%*%y11
 y11_hat <- x11%*%b11
 
+# compare coefficients
+round(b10[2], 10) == round(b11, 10)
+
 # compare R-squared
-Rsquared10 == Rsquared11
+round(Rsquared10, 10) == round(Rsquared11, 10)
 
 # check with lm model
 Reg11 <- lm(dmeanqu~dmeanprice,my_data)
@@ -470,7 +470,6 @@ M <- diag(57)-P
 e12 <- M%*%y12
 # sum of squared residuals, SSR=e'e
 SSR <- t(e12)%*%e12
-SSR
 # construct demeaner
 i <- c(rep(1,57))
 M0 <- diag(57)-i%*%t(i)*(1/57)
@@ -478,7 +477,6 @@ M0 <- diag(57)-i%*%t(i)*(1/57)
 M0y <- M0%*%y12
 # total sum of squares
 SST <- t(M0y)%*%M0y
-SST
 # calculate R squared
 Rsquared12 <- 1-(SSR/SST)
 Rsquared12
@@ -515,7 +513,7 @@ ggplot() +
 ```
 
 *What do you see in terms of fit?*
-The fit is better when there are more explanatory variables included in the model. The R-squared value with more variables is **`r Rsquared12`** which is higher than the R-squared value when qu is regressed on only price and a constant, **`r Rsquared10`**. However, we also know that R-squared is strictly increasing as we add more predictors; from the lm model output, we can see that the adjusted R-squared has also increased slightly compared to question 10 (0.106 vs 0.111). 
+The fit is better when there are more explanatory variables included in the model. The R-squared value with more variables is **`r Rsquared12`** which is higher than the R-squared value when qu is regressed on only price and a constant, **`r Rsquared10`**. However, we also know that R-squared is strictly increasing as we add more predictors; from the `lm` model output, we can see that the adjusted R-squared has also increased slightly compared to question 10 (0.106 vs 0.111). 
 
 From the fitted vs. true plot, we can see that there is a cluster of points around the lower true values, indicating that the model is capable of closely predicting lower quantities. For higher true values of quantity, there are greater discrepancies between the fitted and true values. The model seems to underpredict quantities as the true values rise, indicated by several points lying above the 45-degree line.
 
@@ -526,7 +524,7 @@ ggplot() +
   # fuel efficiency on x-axis, residuals on y-axis
   geom_point(aes(x = my_data$fuel, y = e12)) +
   labs(x = "Fuel Efficiency (liter per km)",
-       y = "Residuals",
+       y = "Residuals (Quantity)",
        title = str_wrap("Residuals vs. fuel efficiency from multivariate linear regression of quantity", 40)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
@@ -570,7 +568,6 @@ M <- diag(57)-P
 e13 <- M%*%y13
 # sum of squared residuals, SSR=e'e
 SSR <- t(e13)%*%e13
-SSR
 # construct demeaner
 i <- c(rep(1,57))
 M0 <- diag(57)-i%*%t(i)*(1/57)
@@ -578,10 +575,9 @@ M0 <- diag(57)-i%*%t(i)*(1/57)
 M0y <- M0%*%y13
 # total sum of squares
 SST <- t(M0y)%*%M0y
-SST
 # calculate R squared
-Rsquared <- 1-(SSR/SST)
-Rsquared
+Rsquared13 <- 1-(SSR/SST)
+Rsquared13
 
 # compare with lm
 Reg13 <- lm(qu ~ price + weight + luxury, my_data)
@@ -608,9 +604,9 @@ stargazer(Reg13, Reg13_fuel, reg13_res,
 *We wanted to get  effect of fuel consumption on quantity, all else constant.*
 *To which coefficient of a previous question is the coefficient of fuelres equal to, and why?*
 
-b13 is equal to the coefficient of fuel efficiency in the regression of qu on on a constant, price, luxury indicator, weight, and fuel efficiency.
+The coefficient of **fuelres** `b13` is equal to the coefficient of fuel efficiency in the regression of qu on on a constant, price, luxury indicator, weight, and fuel efficiency.
 
-This is a demonstration of the Frish-Waugh-Lovell Theorem. Let us partition the original $X$ into $X_1$ and $X_2$ where $X_1$ includes the constant, price, luxury, and weight and $X_2$ includes fuel and let $y$ equal quantity. If $X_1$ and $X_2$ are not orthogonal, then $b_2$ is equal to the coefficients obtained when the residuals of regressing $y$ on $x_1$ are regressed on the residuals of regressing $X_2$ on $X_1$.
+This is a demonstration of the Frish-Waugh-Lovell Theorem. Let us partition the original $X$ into $X_1$ and $X_2$ where $X_1$ includes the constant, price, luxury, and weight and $X_2$ includes fuel and let $y$ equal quantity such that the true population model is $y = X_1b_1 + X_2b_2 + \epsilon$. If $X_1$ and $X_2$ are not orthogonal, then $b_2$ is equal to the coefficients obtained when the residuals of regressing $y$ on $x_1$ are regressed on the residuals of regressing $X_2$ on $X_1$.
 
 
 # Question 14
@@ -630,7 +626,6 @@ M <- diag(57)-P
 e14 <- M%*%y14
 # sum of squared residuals, SSR=e'e
 SSR <- t(e14)%*%e14
-SSR
 # construct demeaner
 i <- c(rep(1,57))
 M0 <- diag(57)-i%*%t(i)*(1/57)
@@ -638,10 +633,9 @@ M0 <- diag(57)-i%*%t(i)*(1/57)
 M0y <- M0%*%y14
 # total sum of squares
 SST <- t(M0y)%*%M0y
-SST
 # calculate R squared
-Rsquared <- 1-(SSR/SST)
-Rsquared
+Rsquared14 <- 1-(SSR/SST)
+Rsquared14
 
 # Generate series of predicted logqu values and plot against logprice
 y14_hat <- P%*%y14
@@ -659,8 +653,9 @@ ggplot() +
 
 *Call this the Regression in logs.*
 *Is the estimated car demand elastic with respect to price?*
+
 Yes, demand is elastic with respect to price because the absolute value of the coefficient is greater than 1.
-A 100% increase in price leads to a >400% decrease in demand.
+A 100% increase in price leads to a >400% decrease in quantity demanded.
 
 # Question 15
 
@@ -703,5 +698,6 @@ b10000
 ```
 
 *What do you see as you increase the sample?*
-As the sample size increases, beta0 approaches 0 and beta1 approaches 1.
+
+As the sample size increases, $\beta_0$ approaches 0 and $\beta_1$ approaches 1.
 
