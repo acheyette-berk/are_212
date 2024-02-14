@@ -114,8 +114,6 @@ lscatter
 ```
 
 ```{r estimate slope using OLS}
-# TODO: Should we be using a constant in OLS regression??? ####
-
 # estimate slope using OLS
 ols_estimator <-function(y,X){
   # Sample size
@@ -154,12 +152,14 @@ ols_estimator <-function(y,X){
   return(list(b, Rsquared, y_hat, e, seb))
 }
 
+# Assume that we should use a constant
+X3 <- cbind(1, my_data$lprice)
 results3 <- ols_estimator(y3, X3)
 b3 <- results3[[1]]
 b3
 ```
 
-The estimated slope of this regression using OLS (without a constant) is **`r b3`**.
+The estimated slope of this regression using OLS (without a constant) is **`r b3[[2]]`**.
 
 # Question 4
 
@@ -202,12 +202,29 @@ ggplot() +
 *What is the estimated OLS slope associated with this scatter plot? Estimate a regression (no constant) to answer this and explain what theorem underlies the fact that this slope is the marginal effect of lprice on lqu in a regression that also features fuel, luxury, domestic, and a constant.*
 
 ```{r OLS of scatter plot elqu vs. elprice}
-results4_elqu <- ols_estimator(elqu, elprice)
-b4_elqu <- results4_elqu[[1]]
-b4_elqu
+# Sample size
+X4c <- elprice
+y4c <- elqu
+n <- length(elqu)
+df4c <- length(elqu) - ncol(X4) - 1
+# Find coefficient vector
+b4c <- solve(t(X4c) %*% X4c) %*% t(X4c) %*% y4c
+b4c
+
+# projection matrix of reg y on X
+P <- X4c%*%solve(t(X4c)%*%X4c)%*%t(X4c)
+# residual maker of reg y on x: M= I - P
+M <- diag(n)-P
+# sum of squared residuals, SSR=e'e
+e <- M%*%y4c
+s2 <- as.numeric(t(e)%*%e)/df4c
+#varcov matrix b
+vb <- s2*solve(t(X4c)%*%X4c)
+#std error b
+seb4c <- sqrt(diag(vb))
 ```
 
-The OLS slope for the residuals `elqu` on the residuals `elprice`, **`r b4_elqu`**, is equal to the coefficient of `lprice` in the regression of `lqu` on `lprice`, fuel, luxury, domestic, and a constant. This is a demonstration of the Frish-Waugh-Lovell Theorem.
+The OLS slope for the residuals `elqu` on the residuals `elprice`, **`r b4c`**, is equal to the coefficient of `lprice` in the regression of `lqu` on `lprice`, fuel, luxury, domestic, and a constant. This is a demonstration of the Frish-Waugh-Lovell Theorem.
 
 # Question 5
 
@@ -215,27 +232,27 @@ The OLS slope for the residuals `elqu` on the residuals `elprice`, **`r b4_elqu`
 
 The slope estimates in 3 and 4 are not equal because there is some relationship between `lprice` and the other variables in 4. The estimates would be equal if the vectors were orthogonal, i.e., there was no relationship between `lprice` and the other variables.
 
+In other words, there is omitted variable bias in the coefficient of `lprice` in question 3. 
+
 # Question 6
 
 *Please interpret the OLS slope point estimate size, sign of the slope lprice estimate in 4.*
 
-The OLS slope for the residuals `elqu` on the residuals `elprice`, **`r b4_elqu`**, means that for each 100% increase in `price` there is a ~333% decrease in `qu`. We know that it is a decrease because the slope is negative.
+The OLS slope for the residuals `elqu` on the residuals `elprice`, **`r b4c`**, means that for each 100% increase in `price` there is a ~333% decrease in `qu`. We know that it is a decrease because the slope is negative.
 
 *What is the pvalue for the estimated lprice coefficient? Use the stat tables for this. And then check with* $pvalue_6 = 2 \cdot pt(abs(t_6),df)$ *, where t6 is the t stat value t6=-, and df are degrees of freedom*
 
 ```{r pvalue for lprice coefficient}
 # pvalue for lprice coefficient
-seb6_elqu <- results4_elqu[[5]]
-t6 <- b4_elqu/seb6_elqu
-df6 <- length(elqu) - 1 # only one parameter
+t6 <- b4c/seb4c
 t6
 ```
 
-The $t$ statistic is **`r t6`** and there are **`r df6`** degrees of freedom. Looking at the t-tables, this corresponds to a p-value of less than 0.000.
+The $t$ statistic is **`r t6`** and there are **`r df4c`** degrees of freedom. Looking at the t-tables, this corresponds to a p-value of less than 0.000.
 
 ```{r check pvalue}
 # pvalue for lprice coefficient
-pvalue6 <- 2*(1-pt(abs(t6),df6))
+pvalue6 <- 2*(1-pt(abs(t6),df4c))
 pvalue6
 ```
 
@@ -249,52 +266,39 @@ The p-value is **`r pvalue6`**.
 $H_0: \beta = -4$
 $H_a: \beta \neq -4$
 
-Remember, estimate of $\beta$ is *b*, **`r b4_elqu`** and standard error is **`r seb6_elqu`**.
+Remember, estimate of $\beta$ is *b*, **`r b4c`** and standard error is **`r seb4c`**.
 
 ```{r find t}
 # get t statistic
-t7 <- (b4_elqu - (-4))/seb6_elqu
+t7 <- (b4c - (-4))/seb4c
+t7
 ```
 
-Critical value of *t* for 5% significance and **`r df6`** degrees of freedom from table is between 2.000 and 2.021.
+Critical value of *t* for 5% significance and **`r df4c`** degrees of freedom from table is between 2.000 and 2.021.
 
 The *t* statistic is **`r t7`**, which is less than the critical value. Therefore, we cannot reject the null hypothesis.
 
 # Question 8
 
 *Estimate the sample data correlation of all these variables with each other: lqu, lprice, fuel, weight, luxury, domestic. Suppose the population model is given by*
-$lqu=beta0+ lprice beta1 + domestic beta2 +fuel beta3 + luxury beta4 +epsilon (8.a)$
+
+$lqu = \beta_0+ lprice \beta_1 + domestic \beta_2 +fuel \beta_3 + luxury \beta_4 + \epsilon (8.a)$
+
 *and you estimate the model*
-$lqu=alpha0+ lprice alpha1 + fuel alpha3 +luxury alpha4 +epsilon (8.b)$
+
+$lqu = \alpha_0+ lprice \alpha_1 + fuel \alpha_3 + luxury \alpha_4 + \epsilon (8.b)$
 
 *Based on the variables’ correlation and without estimating any regression models, would the estimated coefficient for fuel in (8.b) have a negative or a positive bias? Explain briefly.*
 
 ```{r find correlations}
+# correlation between domestic and lqu
+cor(my_data$domestic,my_data$lqu)
+
 # correlation between fuel and domestic
 cor(my_data$fuel,my_data$domestic)
-
-# correlation between luxury and domestic
-cor(my_data$luxury,my_data$domestic)
-
-# correlation between lprice and domestic
-cor(my_data$lprice,my_data$domestic)
 ```
-Domestic cars tend to use more fuel and more fuel-intensive cars tend to be domestic.
+Omitting `domestic` from the model would cause omitted variable bias. Since `lqu` and `domestic` are positively correlated and `domestic` and `fuel` are positively correlated, then the coefficient for `fuel` in (8.b) would tend to be overestimated if `domestic` is omitted, i.e. the coefficient for `fuel` would have positive bias. Intuitively, increase in `lqu` from `domestic` would be falsely attributed to `fuel`.
 
-The estimated coefficient for fuel in (8.b) would have a negative bias.
-
-Since fuel and domestic are closely related, the coefficients on a regression that includes domestic would tend to be more inflated (positive bias). Therefore the regression that doesn't include domestic would tend to have "deflated" (negative bias) effect on lqu.
-
-```{r run regression for 8.b}
-# Regress lqu on lprice, fuel, luxury, and a constant
-X8b <- cbind(1, my_data$lprice, my_data$fuel, my_data$luxury)
-y8b <- my_data$lqu
-results8b <- ols_estimator(y8b, X8b)
-
-# Return coefficients
-b8b <- results8b[[1]]
-b8b
-```
 
 # Question 9
 
@@ -330,20 +334,21 @@ Since one of the explanatory variables is a linear combination of another explan
 
 ```{r test null hypotehsis that luxury does not affect coefficient of lprice}
 # Regress lqu on lprice, luxury, interaction term, and a constant
-reg11 <- lm(lqu~lprice + luxury + lprice*luxury, my_data)
+reg11 <- lm(lqu~lprice+domestic+fuel+luxury+lprice*luxury, my_data)
 summary(reg11)
 
 # Find p-value
 pval11 <- summary(reg11)$coefficients[4, 4]
+pval11
 ```
 
 Null hypothesis: $H_0$: $\beta_3 = 0$
 
 Alternative hypothesis: $H_a$: $\beta_3 \neq 0$
 
-Since the p-value of the null hypothesis is **`r pval11`** which is greater than 0.05, we cannot reject the null hypothesis.
+Since the p-value of the null hypothesis is **`r pval11`** which is less than 0.05, we can reject the null hypothesis.
 
-We cannot conclude that the marginal effect of `lprice` on `lqu` differs between luxury and non-luxury cars.
+We conclude that the marginal effect of `lprice` on `lqu` differs between luxury and non-luxury cars.
 
 
 # Question 12
