@@ -227,7 +227,7 @@ The OLS slope for the residuals `elqu` on the residuals `elprice`, **`r b4_elqu`
 # pvalue for lprice coefficient
 seb6_elqu <- results4_elqu[[5]]
 t6 <- b4_elqu/seb6_elqu
-df6 <- nrow(X4) - ncol(X4)
+df6 <- length(elqu) - 1 # only one parameter
 t6
 ```
 
