@@ -207,11 +207,11 @@ The point estimate from question 4 is `r b_4_e` and the sign is negative. This i
 ```{r }
 
 # sum of squared residuals 
-ssr <- sum(elqu^2)
+ssr <- as.numeric(t(elqu)%*%elqu)
 # Number of observations
-n <- length(elqu) 
+n <- nrow(elqu) 
 # Number of parameters estimated (just the slope in no-constant model)
-k <- 1 
+k <- ncol(X_4) 
 (df <- n-k)
 (sigma_squared <- ssr / df)
 
