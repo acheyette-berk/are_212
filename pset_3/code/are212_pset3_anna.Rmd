@@ -124,15 +124,14 @@ my_data %>%
 
 ```{r regression log price + log quantity}
 
-y_3 <- my_data$lprice
+y_3 <- my_data$lqu
 
-X_3 <- cbind(1, my_data$lqu)
+X_3 <- cbind(1, my_data$lprice)
 
 # find coefficient
 b_3 <- solve(t(X_3) %*% X_3) %*% t(X_3) %*% y_3
 b_3
 
-# do we need to do more than this?? this gives the slope
 ```
 
 # Question 4
@@ -224,8 +223,8 @@ The point estimate from question 4 is `r b_4_e` and the sign is negative. This i
 ssr <- as.numeric(t(residual_residuals)%*%residual_residuals)
 # Number of observations
 n <- nrow(residual_residuals) 
-# Number of parameters estimated 
-k <- ncol(X_4_e) 
+# Number of parameters estimated across both regressions
+(k <- ncol(X_4) + ncol(X_4_e)) 
 (df <- n-k)
 (sigma_squared <- ssr / df)
 
@@ -233,13 +232,18 @@ k <- ncol(X_4_e)
 (se_beta <- sqrt(diag(var_cov_matrix)))
 (t_statistic_6 <- b_4_e / se_beta)
 
+```
+
+
+*What is the pvalue for the estimated lprice coefficient?*
+Using the t-table, we find the nearest number below our degrees of freedom (which is 40, in this case) and move to the right to find the t-value. Since our test statistic is |`r t_statistic_6`| and the largest t-statistic in the table for 40 df is 3.551, we can conclude that our p-value for a two-sided test is < 0.001.
+
+```{r}
+
 # Since it's a two-tailed test, double the one-tailed p-value
 (p_value_two_tailed <- 2 * pt(t_statistic_6, df))
 
 ```
-
-*What is the pvalue for the estimated lprice coefficient?*
-Using the t-table, we find the nearest number below our degrees of freedom (which is 40, in this case) and move to the right to find the t-value. Since our test statistic is |`r t_statistic_6`| and the largest t-statistic in the table for 40 df is 3.551, we can conclude that our p-value for a two-sided test is < 0.001.
 
 # Question 7
 
@@ -263,7 +267,7 @@ alpha <- 0.05
 
 ```
 
-Using the t-table for the nearest (smaller) degrees of freedom value to 56 (which is 40), we find the critical value equal to 2.021 for a 95% confidence leve. Our test statistic is `r t_statistic_7`, which is less than the critical value. Thus, we cannot reject the null hypothesis that the marginal effect of lprice on lqu is -4, all else equal. 
+Using the t-table for the nearest (smaller) degrees of freedom value to 56 (which is 40), we find the critical value equal to 2.021 for a 95% confidence level. Our test statistic is `r t_statistic_7`, which is less than the critical value. Thus, we cannot reject the null hypothesis that the marginal effect of lprice on lqu is -4, all else equal. 
 
 # Question 8
 
@@ -271,16 +275,15 @@ Using the t-table for the nearest (smaller) degrees of freedom value to 56 (whic
 variables <- my_data[, c("lqu", "lprice", "fuel", "weight", "luxury", "domestic")]
 
 # Calculate the correlation matrix
-# ** Are we allowed to use `cor` ?
 (correlation_matrix <- cor(variables))
 
 ```
 
-The omitted variable from model (8.b) that is included in model (8.a) but could be most concerning for bias is domestic, given its relationship with lqu (0.577) and fuel.
+The omitted variable from model (8.b) that is included in model (8.a) but could be most concerning for bias is domestic, given its relationship with lqu (0.577) and fuel (0.153).
 
 The presence of a positive correlation between fuel and lprice, as well as weight, indicates that any omitted variable related to these aspects (which also influences lqu) could lead to bias in the estimation of the fuel coefficient if not controlled for.
 
-Without controlling for domestic, the estimated coefficient for fuel in model (8.b) might have a positive bias due to the omission of the domestic variable, which is positively correlated with both lqu and fuel to a lesser extent. This suggests that part of the positive effect of domestic cars on lqu could be inaccurately attributed to fuel, leading to an overestimation of the positive impact of fuel efficiency or cost on lqu.
+Without controlling for domestic, the estimated coefficient for fuel in model (8.b) might have a positive bias due to the omission of the domestic variable, which is positively correlated with both lqu and fuel. This suggests that part of the positive effect of domestic cars on lqu could be inaccurately attributed to fuel, leading to an overestimation of the positive impact of fuel efficiency or cost on lqu.
 
 # Question 9
 
@@ -313,9 +316,8 @@ X_10 <- cbind(1, my_data$lprice,
 "Error in solve.default(t(X_10) %*% X_10) : 
   system is computationally singular: reciprocal condition number = 5.40872e-18"
   
-We encounter an error when trying to run this regression because it is singular - advertising is perfectly collinear with lprice.
- **more to say here?**
- 
+We encounter an error when trying to run this regression because it is singular - advertising is perfectly collinear with lprice, which violates the full rank assumption of OLS.
+
 # Question 11
  
 Regression model:
@@ -330,11 +332,13 @@ $H_1: \beta_3 \neq 0$
 # test the null hypothesis that the marginal effect# in lprice on lqu does not differ by luxury classification of the car
 
 # Estimate the regression model with interaction term
-model <- lm(lqu ~ lprice + luxury + lprice:luxury, 
+model <- lm(lqu ~ lprice + luxury + domestic + fuel + lprice:luxury, 
             data = my_data)
 summary(model)
 
 
 ```
 
-Based on the summary output, the coefficient of the interaction of $lprice*luxury$ is -5.984, with a t-value of -0.742. The p-value is 0.461, which is greater than 0.05, so we fail to reject the null hypothesis that that the marginal effect of lprice on lqu does not differ between luxury and nonluxury goods. 
+Based on the summary output, the coefficient of the interaction of $lprice*luxury$ is -17.44827, with a t-value of -3.281. The p-value is 0.00187, which is less than 0.05, so we can reject the null hypothesis that that the marginal effect of lprice on lqu does not differ between luxury and nonluxury goods.
+
+
