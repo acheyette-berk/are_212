@@ -186,8 +186,22 @@ ggplot() +
 # the marginal effect of lprice on lqu
 # in a regression that also features fuel,luxury, domestic, and a constant.
 
-# find coefficients
+# find coefficient
 (b_4_e <- solve(t(elprice) %*% elprice) %*% t(elprice) %*% elqu)
+
+# create X and y 
+X_4_e <- elprice
+y_4_e <- elqu
+# projection matrix, P
+P <- X_4_e %*% solve(t(X_4_e) %*% X_4_e) %*% t(X_4_e)
+# residual maker, M = I - P
+M <- diag(nrow(X_4_e)) - P
+
+# calculate residuals of regression of residuals of lprice and lquantity
+residual_residuals <- M %*% y_4_e
+
+
+
 
 ```
 *What is the estimated OLS slope associated with this scatter plot? Estimate a regression (no constant) to answer this and explain what theorem underlies the fact that this slope is the marginal effect of lprice on lqu in a regression that also features fuel,luxury, domestic, and a constant.*
@@ -207,11 +221,11 @@ The point estimate from question 4 is `r b_4_e` and the sign is negative. This i
 ```{r }
 
 # sum of squared residuals 
-ssr <- as.numeric(t(elqu)%*%elqu)
+ssr <- as.numeric(t(residual_residuals)%*%residual_residuals)
 # Number of observations
-n <- nrow(elqu) 
-# Number of parameters estimated (just the slope in no-constant model)
-k <- ncol(X_4) 
+n <- nrow(residual_residuals) 
+# Number of parameters estimated 
+k <- ncol(X_4_e) 
 (df <- n-k)
 (sigma_squared <- ssr / df)
 
