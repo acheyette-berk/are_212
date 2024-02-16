@@ -1,6 +1,6 @@
 ---
 title: "ARE 212 Problem Set 3"
-author: "Eleanor Adachi, Aline Adayo, Anna Cheyette, Karla Neri, and Stephen Stack"
+author: "Aline Abayo, Eleanor Adachi, Anna Cheyette, Karla Neri, and Stephen Stack"
 date: "`r Sys.Date()`"
 output: pdf_document
 header-includes:
@@ -159,7 +159,7 @@ b3 <- results3[[1]]
 b3
 ```
 
-The estimated slope of this regression using OLS (without a constant) is **`r b3[[2]]`**.
+The estimated slope of this regression using OLS is **`r b3[[2]]`**.
 
 # Question 4
 
@@ -392,7 +392,7 @@ F_fitBased
 Rr1 <- c(0, 0, 0, 0, 1, 0)
 Rr2 <- c(0, 1, 0, 0, 0, -60)
 R <- t(cbind(Rr1,Rr2))
-q<-c(1.5, 0)
+q <- c(1.5, 0)
 VRbq <- s2_12* R %*% solve(t(X12) %*% X12) %*% t(R)
 Fw <- (t(R %*% b12-q) %*% solve(VRbq) %*% (R %*% b12-q))/2 # J = 2
 Fw
