@@ -36,7 +36,7 @@ q2_price_max  <- max(input_data$price)
 # Confidence interval: x_bar +/- t-crit
 alpha  = 0.01
 df     = nrow(input_data) - 1
-t_crit = qt(p=0.01, df=df)
+t_crit = qt(p=0.005, df=df)
 
 q2_ci_lower = q2_price_mean + t_crit * (q2_price_sd / sqrt(nrow(input_data)))
 q2_ci_upper = q2_price_mean - t_crit * (q2_price_sd / sqrt(nrow(input_data)))
@@ -157,7 +157,7 @@ se_b_q4c<-sqrt(diag(vb))
 # Use this to calculate a t-score
 t_score_q6    <- b_q4_c/se_b_q4c
 t_score_q6
-# We have a t-score of -5.62982, with df 58
+# We have a t-score of -5.62982, with df 53
 # p-value< .00001.
 
 ### Q7 - Testing the marginal effect of lprice
@@ -191,7 +191,7 @@ t_score_q7
 # t-crit: +/- 2.1
 
 ## Step 4: perform test
-# We can see that our observed t-score (1.12) is inside our t-critical range, so we reject the null!
+# We can see that our observed t-score (1.12) is inside our t-critical range, so we fail to reject the null!
 
 ## Step 5: interpret
 # Well, we don't reject the null hypothesis that the parameter value is -4.
@@ -254,8 +254,81 @@ alpha = 0.05
 
 # Step 5 - we can infer that there is indeed an effect
 
+
 ### Q12 - Testing a multi-variable hypothesis
 # H0: beta_domestic = 1.5 AND beta_fuel = 60*beta_weight
+#
+# model: lqu = b0 + b1*fuel + b2*lprice + b3*luxury + b4*domestic + b5*weight + error
+#
+# formula to calculate F: F=(Rb-q)' inv( s2 R (X'X)-1 R') (Rb-q)/J 
+
+# Restrictions matrix and q matrix
+
+Rr1_q12 <-c(0,0,0,0,1,0)
+Rr2_q12 <-c(0,1,0,0,0,-60)
+R_q12   <-t(cbind(Rr1_q12,Rr2_q12))
+R_q12
+
+q_q12 <- c(0,0.1)
+q_q12
+
+# Specify the X and Y
+
+y_q12  = input_data$lqu
+x_q12  = cbind(rep(1, nrow(input_data)), input_data$fuel,  input_data$lprice, input_data$luxury, input_data$domestic, input_data$weight)
+
+# Calculate S
+b_q12  <-solve(t(x_q12)%*%x_q12)%*%t(x_q12)%*%y_q12
+b_q12
+
+e_q12  <- y_q12-x_q12%*%b_q12
+df_q12 <- nrow(input_data) - length(b_q12)
+
+#varcov matrix b
+s2_q12   <- as.numeric(t(e_q12)%*%e_q12)/df_q12
+
+VRbq_q12 <-s2_q12 * R_q12 %*% solve(t(x_q12) %*% x_q12) %*% t(R_q12)
+VRbq_q12
+
+## Wald based test
+Fw_q12 <-t(R_q12 %*% b_q12-q_q12) %*% solve(VRbq_q12) %*% (R_q12 %*% b_q12-q_q12)
+Fw_q12<-Fw_q12 * 0.5
+Fw_q12
+
+# F-wald statistic is 30.87, with 2 and 51 df
+
+F_crit_q12 = qf(0.99,2,51)
+F_crit_q12
+
+# F-crit only 5.05, so reject the null
+
+## Fit based test
+
+# SSR unrestricted
+ssr_no_restrict_q12 <- as.numeric(t(e_q12)%*%e_q12)
+
+# Restricted model
+X_r_q12 <- cbind(1, (60*input_data$fuel + input_data$weight), input_data$lprice, input_data$luxury)
+y_r_q12 <- input_data$lqu - 1.5*input_data$domestic # We know this, so can subtract is from the y
+
+i       <- c(rep(1,57))
+M0      <- diag(57)-i%*%solve(t(i)%*%i)%*%t(i)
+
+e_r_q12 <-M0%*%y_r_q12
+
+ssr_restricted_q12 <-as.numeric(t(e_r_q12)%*%e_r_q12)
+
+# Fit based test
+Ff_q12 <-(ssr_restricted_q12-ssr_no_restrict_q12)/(2*(s2_q12))
+Ff_q12
+
+# In my formulation, they aren't equal... but in Eleanor's they are...
+
+### Q13 - Testing a multi-variable hypothesis
+
+
+
+
 
 
 
