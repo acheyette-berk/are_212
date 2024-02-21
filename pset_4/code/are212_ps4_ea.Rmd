@@ -1,0 +1,56 @@
+---
+title: "ARE 212 Problem Set 4"
+author: "Aline Abayo, Eleanor Adachi, Anna Cheyette, Karla Neri, and Stephen Stack"
+date: "`r Sys.Date()`"
+output: pdf_document
+header-includes:
+  - \usepackage[T1]{fontenc}
+  - \usepackage{textcomp}
+  - \usepackage{lmodern}
+  - \usepackage{underscore}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r set up}
+# Comment out after installing
+# install.packages("pacman")
+
+options(scipen = 999)
+
+# Load packages
+library(pacman)
+p_load(dplyr,haven, readr, knitr, readxl, psych, ggplot2, stats4)
+p_load(lmSupport, magrittr, qwraps2, car, lmtest, stargazer,sandwich)
+
+# get directory of current file
+current_directory <-
+  dirname(dirname(rstudioapi::getSourceEditorContext()$path))
+```
+
+# Exercise 1
+
+*For this question, please download the dataset pset4_2024.dta from bCourses.*
+
+```{r load data}
+# Load data
+my_data <- read_dta(file.path(current_directory, "data", "pset4_2024.dta"))
+```
+
+*We would like to estimate the model:*
+
+$logquantity_i = \beta_1 + fuel_i \beta_2 + logprice_i \beta_3 + weight_i \beta_4 + \epsilon_i$ (eq. 1)
+
+## 1. Estimate the model above in (eq.1) via OLS where weight^2 i is the square of weight of car model i.
+
+## 2. Conduct a Breusch Pagan Test
+
+*Conduct a Breusch Pagan Test for heteroskedastic errors using the canned reg12<-lm(lqu~ etc) and bptest(reg13). Do we have a problem?*
+
+## 3. Calculate the White robust standard errors.
+
+*Calculate the White robust standard errors.*
+
+*Comment on how they compare to the traditional OLS standard errors. Is this the right way to go about dealing with potential heterogeneity problems?*
