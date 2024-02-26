@@ -23,7 +23,9 @@ options(scipen = 999)
 # Load packages
 library(pacman)
 p_load(dplyr,haven, readr, knitr, readxl, psych, ggplot2, stats4)
-p_load(lmSupport, magrittr, qwraps2, car, lmtest, stargazer,sandwich)
+#p_load(lmSupport, magrittr, qwraps2, car, lmtest, stargazer,sandwich)
+# Remove lmSupport, add tidyverse and dplyr and margins
+p_load(magrittr, qwraps2, car, lmtest, stargazer,sandwich, tidyverse, dplyr, margins)
 
 # get directory of current file
 current_directory <-
@@ -43,14 +45,602 @@ my_data <- read_dta(file.path(current_directory, "data", "pset4_2024.dta"))
 
 $logquantity_i = \beta_1 + fuel_i \beta_2 + logprice_i \beta_3 + weight_i \beta_4 + \epsilon_i$ (eq. 1)
 
-## 1. Estimate the model above in (eq.1) via OLS where weight^2 i is the square of weight of car model i.
+## 1. Estimate the model above in (eq.1) via OLS.
+
+*NOTE: Per Sofia's announcement on February 23rd, using weight instead of weight squared.*
+
+```{r estimate Exercise 1 model using OLS}
+# Create lprice and lqu
+my_data$lprice <- log(my_data$price)
+my_data$lqu <- log(my_data$qu)
+
+# declare X and y variables
+X1 <- cbind(1, my_data$fuel, my_data$lprice, my_data$weight)
+y1 <- my_data$lqu
+
+n1 <- length(y1)
+# degrees of freedom
+df <- nrow(X1) - ncol(X1)
+# Find coefficient vector
+b1 <- solve(t(X1) %*% X1) %*% t(X1) %*% y1
+# projection matrix of reg y on X
+P <- X1%*%solve(t(X1)%*%X1)%*%t(X1)
+# residual maker of reg y on X: M= I - P
+M <- diag(n1)-P
+# residuals
+e <- M%*%y1
+# varcov matrix b
+s2 <- as.numeric(t(e)%*%e)/df
+vb <- s2*solve(t(X1)%*%X1)
+# std error of b
+seOLS1 <- sqrt(diag(vb))
+```
 
 ## 2. Conduct a Breusch Pagan Test
 
-*Conduct a Breusch Pagan Test for heteroskedastic errors using the canned reg12<-lm(lqu~ etc) and bptest(reg13). Do we have a problem?*
+*Conduct a Breusch-Pagan test for heteroskedastic errors using the canned reg12<-lm(lqu~ etc) and bptest(reg13). Do we have a problem?*
+
+From Lecture 9: For Breusch-Pagan test, let $\sigma_i^2 = \sigma^2 f(\alpha_0 +\alpha' z_i)$
+
+where $z_i$ is a vector of independent variables. If $\alpha=0$, then the model is homoskedastic.
+
+Null hypothesis: $H_0$: $\alpha = 0$ (homoskedastic)
+
+Alternative hypothesis: $H_a$: $\alpha \neq 0$ (heteroskedastic)
+
+```{r conduct B-P test for heteroskedastic errors}
+reg2 <- lm(lqu~fuel+lprice+weight, my_data)
+summary(reg2)
+bptest(reg2)
+```
+
+The test statistic is 56.873 and the corresponding p-value is 0.000000000002735. Since the p-value is less than 0.05, we reject the null hypothesis and conclude that heteroscedasticity is present in the regression model.
+
+Yes, we have a problem because our current standard error calculation assumes homoskedasticity.
 
 ## 3. Calculate the White robust standard errors.
 
 *Calculate the White robust standard errors.*
 
+```{r calculate White robust standard errors}
+# element-by-element multiplication of epsilons and X matrix
+Xe <- cbind(e, my_data$fuel*e, my_data$lprice*e, my_data$weight*e)
+
+# calculate White robust variance-covariance matrix, assume large samples
+Vb_whiteRobust <- solve(t(X1)%*%X1) %*% t(Xe)%*%Xe %*% solve(t(X1)%*%X1)  
+
+# calculate White robust standard errors
+seWhite1 <- sqrt(diag(Vb_whiteRobust))
+seWhite1
+```
+
 *Comment on how they compare to the traditional OLS standard errors. Is this the right way to go about dealing with potential heterogeneity problems?*
+
+```{r compare OLS and White robust standard errors}
+seOLS1
+seWhite1
+```
+This is probably the best way for us to deal with heteroskedasticity assuming that we don't know the specific form of heteroskedasticity (i.e., we don't know $\Omega$). We observe that some of White robust standard errors are smaller than their OLS counterparts and some are larger.
+
+The sample size **`r n1`** is large compared to the number of explanatory variables so the small sample correction is not necessary.
+
+## 4. Delta method
+
+*Suppose that there is a model where a structural parameter of interest γ is defined as*
+
+$\gamma = log(\beta_2 + 2)(\beta_3 + 3\beta_4)$
+
+*Using the OLS estimation results from eq. 1, calculate* $\hat{\gamma}$ *and its white standard error (hint: think Delta Method).*
+
+Null hypothesis: $g(\beta) = q$
+
+Alternative hypothesis: $g(\beta) \neq q$
+
+From Lecture 9: Let $G$ be the matrix of first derivatives of $\beta$, $G(\beta) = \frac{\partial g(\beta)}{\partial \beta'}$
+
+Delta method: $\sqrt{N}(g(b_N)-g(\beta)) \xrightarrow[]{\text{ d }} N(0, G(\beta)\sigma^2Q^{-1}G(\beta)')$
+
+```{r estimate gamma}
+b2 <- b[[2]]
+b3 <- b[[3]]
+b4 <- b[[4]]
+
+G <- cbind(0, (b3+3*b4)/log(b2+2), log(b2+2), 3*log(b2+2) )
+Q <- (t(X1)%*%X1)/n1
+
+vbGammaOLS <- s2* G%*%solve(Q)%*%t(G)
+seGammaOLS <- sqrt(diag(vbGammaOLS))
+seGammaOLS
+
+# TODO: How to estimate White standard error for gamma??? ####
+
+```
+
+# Exercise 2
+
+*Let the equation (eq.2) be the linear model of log quantity lqu, where lprice=log(price), given by*
+
+$lqu_i = \beta_0 + fuel_i \beta_1 + lprice_i \beta_2 + year_i \beta_3 + weight_i \beta_4 + luxury_i \beta_5 + \epsilon_i$ (eq. 2)
+
+Given the OLS estimates,
+
+## 1. Please interpret your results in terms of the log price variable OLS coefficient.
+
+```{r estimate Exercise 2 model using OLS}
+# declare X and y variables
+X2 <- cbind(1, my_data$fuel, my_data$lprice, my_data$year, my_data$weight, my_data$luxury)
+y2 <- my_data$lqu
+
+n2 <- length(y2)
+# degrees of freedom
+df <- nrow(X2) - ncol(X2)
+# Find coefficient vector
+b2 <- solve(t(X2) %*% X2) %*% t(X2) %*% y2
+b2
+# projection matrix of reg y on X
+P <- X2%*%solve(t(X2)%*%X2)%*%t(X2)
+# residual maker of reg y on X: M= I - P
+M <- diag(n2)-P
+# residuals
+e <- M%*%y2
+# varcov matrix b
+s2 <- as.numeric(t(e)%*%e)/df
+vb <- s2*solve(t(X2)%*%X2)
+# std error of b
+se2 <- sqrt(diag(vb))
+```
+The `lprice` coefficient from OLS is **`r b2[[3]]`**. This means that for every 100% increase in `price`, `qu` will decrease by about 144%.
+
+```{r create price-qu scatterplot}
+# create price-qu scatterplot
+scatter <- ggplot() +
+  geom_point(aes(x = my_data$price, y = my_data$qu)) +
+  labs(x = "Car Price (in 1000 Euros)",
+       y = "Car Sales Quantity",
+       title = str_wrap( 
+         "Car Sales Quantity vs. Car Price", 
+         40)) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+scatter
+```
+
+## 2. Omitted variable bias
+
+*Some factors that make you buy a car can also be correlated with higher prices (higher log prices). Please list a couple of such factors.*
+
+Other factors could be correlated with higher prices include safety features, quality/durability, and comfort.
+
+*Explain briefly why these omitted variables would cause the OLS estimate of equation (eq.1) to be biased for the true effect of an increase in log price (using the omitted variable bias approach) and why we cannot say that we are changing log price holding everything else constant in the OLS approach.*
+
+These omitted variables could cause us to be overestimating (in terms of magnitude) the true effect of `lprice` on `lqu`. In other words, the true $\beta_3$ is likely smaller in magnitude (less negative) since some of the downward pressure on `lqu` is being attributed to `lprice` instead of the omitted variables.
+
+We cannot say that we are holding everything else constant because there are omitted variables that we are not controlling for.
+
+## 3. Omit fuel
+
+*By the way, if we omit fuel from equation (eq.2) how does your OLS estimate of the log price change? What does this imply about the covariance between log price and fuel?*
+
+```{r OLS without fuel}
+# declare variables
+X2c <- cbind(1, my_data$lprice, my_data$year, my_data$weight, my_data$luxury)
+
+# Find coefficient vector
+b2c <- solve(t(X2c) %*% X2c) %*% t(X2c) %*% y2
+b2c
+```
+The `lprice` coefficient is now smaller in magnitude, **`r b2c[[2]]`**. This implies that there is a positive correlation between `lprice` and `fuel`.
+
+We would expect higher sales of more fuel efficient cars and lower sales of more expensive cars. However, more fuel efficient cars also tend to be more expensive. Omitting fuel efficiency makes decrease in sales for more expensive cars look smaller.
+
+# Exercise 3
+
+*Specify an (eq.3) that is the linear model of the effect of cost factors common to all European countries (measured by the average log prices of a certain car type in other countries in Europe, not including the country in the dataset) denoted average_o1, with the same other regressors than equation (eq.2) as follows*
+
+$lprice_i = \alpha_0 + fuel_i \alpha_1 + year_i \alpha_2 + weight_i \alpha_3 +luxury_i \alpha_4 + laverage\_o1_i \alpha_5 + v_i$ (eq. 3)
+
+*Please estimate this model by OLS and interpret your results in terms of the coefficient of average_o1.*
+
+```{r estimate lprice model with average_o1 using OLS}
+
+# TODO: Ask Sofia--use average_o1 or take log first? ####
+# Is average_o1 really an average of log prices? Based on the magnitude, seems like an average of prices.
+# Alternative: Should we be comparing average_o1 to log(pr) instead?
+# Log of average not exactly equal to average of logs but closer??
+my_data$laverage_o1 <- log(my_data$average_o1)
+
+# declare X and y variables
+X3 <- cbind(1, my_data$fuel, my_data$year, my_data$weight, my_data$luxury, my_data$laverage_o1)
+y3 <- my_data$lprice
+
+# Find coefficient vector
+b3 <- solve(t(X3) %*% X3) %*% t(X3) %*% y3
+b3
+```
+
+The coefficient of `laverage_o1` is **`r b3[[6]]`**. This means that controlling for the other specified variables, `lprice` in this country will increase by about 77% when the average of prices in other countries increase by 100%.
+
+# Exercise 4
+
+*Specify an (eq.4) that is the linear model of the effect of the average of other countries’ logprices on the log of quantity, with the same other regressors than equation (eq.2) as follows*
+
+$lqu_i = \delta_0 + fuel_i \delta_1 + year_i \delta_2 + weight_i \delta_3 + luxury_i \delta_4 + laverage\_o1_i \delta_5 + u_i$ (eq. 4)
+
+*This is called the reduced form model. Please estimate this model by OLS and interpret the results in terms of the coefficient of this reduced form regression of average_o1.*
+
+```{r estimate reduced form model of lqu with average_o1 using OLS}
+# declare X and y variables
+X4 <- cbind(1, my_data$fuel, my_data$year, my_data$weight, my_data$luxury, my_data$laverage_o1)
+y4 <- my_data$lqu
+
+# Find coefficient vector
+b4 <- solve(t(X4) %*% X4) %*% t(X4) %*% y4
+b4
+```
+The coefficient of `laverage_o1` in the reduced form model of `lqu` is **`r b4[[6]]`**. This is smaller in magnitude than the coefficient of `lprice` in Equation 2. This implies that the relationship between `lprice` and `lqu` in the same country is stronger than the relationship between the log of average prices in other countries, but that the direction of the relationship is the same and `average_o1` could serve as a proxy for `price` if we were unable to measure `price`.
+
+# Exercise 5
+
+*So far we have estimated the car price elasticity using ordinary least squares (OLS). Using price variation in other European countries, however, provides an opportunity to measure the price elasticity in our country of interest using instrumental variables (IV, 2SLS, two-stage least squares). Even though equation (eq.1) has a lot of regressors controlling for factors that could affect the log quantity of cars, we are worried that logprice in the country could be correlated with factors affecting log(quantity) that are not controlled for in the linear model in equation (eq.2), namely with* $\epsilon_i$.
+
+## 1. Instrumental variables
+
+*Estimate equation (eq. 1 or 2???) by instrumental Variables using the variable LogAverageOther1 as an instrument for logprice. Please interpret the IV estimate of the logprice coefficient.*
+
+```{r estimate Equation 2 by IV}
+
+# TODO: Ask Sofia, estimate eq.1 or eq.2? ####
+
+# define variables X and y and instrument Z
+X5 <- cbind(1, my_data$fuel, my_data$lprice, my_data$year, my_data$weight, my_data$luxury)
+y5 <- my_data$lqu
+Z5 <- cbind(1, my_data$fuel, my_data$laverage_o1, my_data$year, my_data$weight, my_data$luxury)
+
+# IV coefficient estimates
+b5_iv <- solve(t(Z5) %*% X5) %*% t(Z5) %*% y5
+b5_iv
+```
+
+Using `laverage_o1` as an instrumental variable, the coefficient of `lprice` is estimated to be **`r b5_iv[[3]]`**. This means that after correcting for omitted variables, `lqu` decreases by about 120% when `lprice` increases by 100%. This is smaller in magnitude than the OLS estimate because the IV applies a correction to address omitted variable bias.
+
+## 2. 2SLS
+
+*Estimate the first-stage regression and in the second stage substitute for logprice the predicted values of the first-stage regression. Please interpret the 2SLS estimate of the logprice coefficient.*
+
+First-stage: Regress $x_k$ on Z
+
+$lprice_i = \alpha_0 + fuel_i \alpha_1 + year_i \alpha_2 + weight_i \alpha_3 + luxury_i \alpha_4 + laverage\_o1_i \alpha_5 + v_i$
+
+```{r estimate Equation 2 by 2SLS - first stage}
+#first stage
+Z5_fs <- cbind(1, my_data$fuel, my_data$laverage_o1, my_data$year, my_data$weight, my_data$luxury)
+a_fs <- solve(t(Z5_fs) %*% Z5_fs) %*% t(Z5_fs) %*% my_data$lprice
+lpricehat <- Z5_fs %*% a_fs
+```
+
+Second-stage: Regress `lqu` on exogeneous x's and $\hat{lprice}$
+
+$lqu_i = \beta_0 + fuel_i \beta_1 + \hat{lprice}_i \beta_2 + year_i \beta_3 + weight_i \beta_4 + luxury_i \beta_5 + \epsilon_i$
+
+```{r estimate Equation 2 by 2SLS - second stage}
+#second stage 2SLS
+X5_hat <- cbind(1, my_data$fuel, lpricehat, my_data$year, my_data$weight, my_data$luxury)
+
+#E[xhat epsilon_i]=0
+b5_2sls <- solve(t(X5_hat) %*% X5_hat) %*% t(X5_hat) %*% y5
+b5_2sls
+
+# compute 2SLS standard errors
+ehat <- y5 - X5%*%b5_2sls
+# NOT e = wage - Xhat*b2sls
+df5 <- nrow(X5) - ncol(X5)
+S2_2sls <- as.numeric(t(ehat)%*%ehat)/df5
+V_2sls <- solve(t(X5_hat)%*%X5_hat)*S2_2sls
+se5_2sls <- sqrt(diag(V_2sls))
+```
+The coefficient of `lprice` from 2SLS is the same as the `lprice` coefficient from IV, **`r b5_2sls[[3]]`**.
+
+
+## 3. Control function
+
+*Estimate the first-stage regression and, in the second stage, use logprice (not the predicted education values of the first-stage regression as above) and also include the residuals from the first stage in the second stage, following a control function approach.*
+
+```{r control function approach}
+
+# TODO: attempt after Lecture 12 ####
+
+```
+
+## 4. Divide reduced-form regression coefficient by first-stage regression coefficient
+
+*The 2SLS coefficient can also be computed by dividing the reduced-form regression coefficient by the first-stage regression coefficient. Compute this ratio, as I did theoretically in the lecture.*
+
+```{r ratio of reduced-form coefficient and FS coefficient}
+# divide reduced-form regression coefficient by first-stage regression coefficient
+coefratio5 <- b4[[6]] / a_fs[[6]]
+```
+
+The ratio of the reduced-form regression coefficient and the first-stage regression coefficient is **`r coefratio5`**.
+
+## 5. Compare regression coefficients from different IV strategies
+
+*Confirm that the regression coefficients computed using the different IV strategies are basically equivalent, given that they all measure the same effect of logprice on log quantity in different instrumental variable fashions.*
+
+```{r ratio of reduced-form coefficient and FS coefficient}
+# compare IV and 2SLS coefficient
+round(b5_iv[[3]], 6) == round(b5_2sls[[6]], 6)
+
+# compare ratio and 2SLS coefficient
+round(coefratio5, 6) == round(b5_2sls[[6]], 6)
+```
+
+## 6. Compare 2SLS to OLS
+
+*How does the 2SLS estimate of log price compare to the OLS estimate? Does the change make sense relative to factors you were worried about that would induce a bias, which could be in* $\epsilon_i$ *when you estimated equation (eq.1) by OLS? How do the standard errors compare, assuming homoskedasticity? Interpret these differences.*
+
+```{r compare OLS and 2SLS coefficients}
+b2[[3]]
+b5_2sls[[3]]
+```
+The 2SLS estimate of the `lprice` coefficient is slightly smaller in magnitude than the OLS estimate. This makes sense because it means that there are other factors that are correlated with high prices that were causing omitted variable bias, but price is still a very significant factor.
+
+```{r compare OLS and 2SLS standard errors}
+se2
+se5_2sls
+```
+The standard errors for 2SLS coefficients are larger. This means that introducing `laverage_o1` instead of only using `lprice` increases the variance of the predictions and the standard error of the coefficients. This makes sense because we would not expect `laverage_o1` to be as correlated with `lqu` as `lprice` since it represents the prices in *other* countries.
+
+## 7. Multiple instruments and Hausman test
+
+*Given that we get efficiency gains with more instruments, you consider now using both logAverageOther1 and logAverageOther2 (two average prices over a different set of European countries) as instruments for logprice. How would you test the null of the validity of both instruments? Perform the Hausman test of overidentifying restrictions assuming homoskedastic disturbances.*
+
+```{r multiple instruments and Hausman test}
+
+# TODO: attempt after Lecture 12 ####
+
+```
+
+# Exercise 6: Limited Dependent Variable
+
+## 1. Load and filter PBM data
+
+*Load the data pset_PBM_2024.dta*
+
+```{r load PBM data}
+# Load data
+pbm_data_raw <- read_dta(file.path(current_directory, "data", "pset4_PBM_2024.dta"))
+```
+
+*Filter the respondents that chose noChoice==1 out of the data, keep only those that have noChoice==0. The remainder of the analysis is only done conditional on choosing one of the two options. Filter out the missing values for chosePBM, yourage, treat, relprice. You should get 262 observations now.*
+
+```{r filter PBM data}
+# Keep only noChoice==0
+pbm_data <- filter(pbm_data_raw, noChoice==0)
+
+# Filter out the missing values for chosePBM, yourage, treat, relprice.
+pbm_data <- pbm_data %>% drop_na(chosePBM, yourage, treat, relprice)
+```
+
+## 2. Run linear probability model and correct standard errors for heteroskedasticity
+
+*Run the linear probability model of choosing the PBM option on yourage and a constant, treat, and relprice using the canned lm function in R and correct the standard errors for heteroskedasticity using the canned package also.*
+
+```{r run linear probability model and computer White robust SE}
+# Linear model
+reg6 <- lm(chosePBM~yourage+treat+relprice, pbm_data)
+summary(reg6)
+
+# Correct standard errors for heteroskedasticity
+# Use hc0, assume large sample
+coeftest(reg6, vcov=hccm(reg6,type="hc0"))
+```
+## 3. Plot predicted probabilities of choosing PBM against respondent’s age
+
+*Like we did in Lecture 10, plot the predicted probabilities (on the y-axis) of choosing PBM against the respondent’s age on the x-axis, and add a horizontal red line for y=0 and a horizontal red line for y=1.*
+
+```{r plot chosePBM-hat vs. yourage}
+# Add fitted values to pbm_data
+pbm_data$chosePBM_lmfit <- reg6$fitted.values
+
+ggplot(pbm_data, aes(x = yourage, y = chosePBM_lmfit)) +
+  # First add points, color determined by whether in or out of [0,1]
+  geom_point() + # add points
+  # add horizontal lines, width slightly wider, making partially transparent, and choosing color
+  geom_hline(yintercept=0, size = 1.4, alpha = 0.35, color = "red") + # add horizontal line at y=0
+  geom_hline(yintercept=1, size = 1.4, alpha = 0.35, color = "red") + # add horizontal line at y=1
+  # generate labels
+  labs(title = "Predicted Probability of Choosing Plant-Based Meat (PBM) vs. Respondent Age",
+       subtitle = "Linear Probability (OLS) Model",
+       x = "Survey Respondent's Age (Years)",
+       y = "Fitted Value (Probability of Ever Choosing PBM)")
+```
+
+*Is there a problem of predicting probabilities that fall out of the 0,1 range using the linear probability model?*
+
+Yes, there are predicted values for `chosePBM` that are greater than 1.
+
+## 4. Logit Model
+
+*Estimate a logit model, using the R canned function (see lecture 10), of the probability of choosing PBM on the same covariates as in 2. Compute the fitted predicted probabilities and plot the scatter plot of the predicted probabilities on the y-axis and age on the horizontal axis.*
+
+```{r logit model for chosePBM}
+# Create logit model
+logit <- glm(chosePBM~yourage+treat+relprice, pbm_data, family=binomial(link="logit"))
+summary(logit)
+
+# add in the logit fitted values
+pbm_data <- mutate(pbm_data, chosePBM_logfit = logit$fitted.values)
+
+# Create scatter plot
+ggplot(pbm_data, aes(x = yourage, y = chosePBM_logfit)) +
+  # First add points, color determined by whether in or out of [0,1]
+  geom_point() + # add points
+  # add horizontal lines, width slightly wider, making partially transparent, and choosing color
+  geom_hline(yintercept=0, size = 1.4, alpha = 0.35, color = "red") + # add horizontal line at y=0
+  geom_hline(yintercept=1, size = 1.4, alpha = 0.35, color = "red") + # add horizontal line at y=1
+  # generate labels
+  labs(title = "Predicted Probability of Choosing Plant-Based Meat (PBM) vs. Respondent Age",
+       subtitle = "Logit Model",
+       x = "Survey Respondent's Age (Years)",
+       y = "Fitted Value (Probability of Ever Choosing PBM)")
+```
+*Did the logit specification fix the problem in 3?*
+
+Yes, there are no longer fitted values that are greater than 1.
+
+## 5. Logit marginal effects
+
+*Using the function of the margin computes the logit marginal effects. Then, create a data frame of the logit model's average values of the covariates. Compute the marginal effects at the mean values. Do these estimated marginal effects differ?*
+
+```{r calculate average marginal effects}
+# calculate marginal effects at every observed value of X and average across the resulting effect estimates
+margins <- margins(logit)
+summary(margins)
+```
+
+```{r calculate marginal effects at means}
+# calculate the marginal effects of each variable at the means of the covariates
+
+# create dataframe of mean data (i.e. one obs of X bar values)
+meandata <- pbm_data %>%
+  select(yourage, treat, relprice) %>%
+  summarise_all(mean)
+
+# compute marginal effects at mean values
+meanmargins <- margins(logit, data = meandata)
+summary(meanmargins)
+```
+
+Yes, the average marginal effects and the marginal effects at means differ.
+
+The average marginal effects are much greater in magnitude than the marginal effects at means. Even though the marginal effects at the mean values of the covariates are small, they are larger at other values. In particular, the marginal effect of `relprice` is statistically significant with a p-value <0.05.
+
+## 6. Test significance of vegetarian and having had PBM before
+
+*Add being vegetarian dummy variable and having had PBM before as a covariate also and re-estimate the logit model.*
+
+```{r logit model with youvegetarian and pbm}
+# Add new variable, being vegetarian AND having had PBM before
+pbm_data <- mutate(pbm_data, vegpbm = youvegetarian*pbm)
+
+# Add new variable to logit model
+logit2 <- glm(chosePBM~yourage+treat+relprice+vegpbm, pbm_data, family=binomial(link="logit"))
+summary(logit2)
+```
+*Test the null that the treatment does not matter in explaining the probability of choosing the PBM.*
+
+Unrestricted model:
+
+$chosePBM_i = \frac{e^z_i}{1+e^z_i}$
+
+where $z_i = \beta_1 + yourage_i \beta_2 + treat_i \beta_3 + relprice_i \beta_4 + vegpbm_i \beta_5 + \epsilon_i$
+
+Null hypothesis: You should use the restricted model (no treatment).
+
+Alternative hypothesis: You should use the unrestricted model.
+
+
+```{r likelihood test for treatment}
+# create model where treatment restricted
+logit2_rtreat <- glm(chosePBM~yourage+relprice+vegpbm, pbm_data, family=binomial(link="logit"))
+summary(logit2_rtreat)
+
+#get log likelihood value unrestricted
+LLU <- logLik(logit2)
+LLU
+
+#get log likelihood value restricted
+LLR <- logLik(logit2_rtreat)
+LLR
+
+# LR test
+LRteststat <- -2 * (as.numeric(LLR)-as.numeric(LLU))
+LRteststat
+
+LRpvalue <- pchisq(LRteststat, df = 1, lower.tail = FALSE)
+LRpvalue
+```
+With a 5% significance level, we would reject the null hypothesis. This means we should use the unrestricted model. This suggests that treatment does matter. 
+
+*Then test the null of whether being vegetarian and having had PBM before does not matter in explaining the probability of choosing PBM.*
+
+```{r likelihood test for vegpbm}
+# create model where vegpbm restricted
+logit2_rvegpbm <- glm(chosePBM~yourage+treat+relprice, pbm_data, family=binomial(link="logit"))
+summary(logit2_rvegpbm)
+
+#get log likelihood value unrestricted
+LLU <- logLik(logit2)
+LLU
+
+#get log likelihood value restricted
+LLR <- logLik(logit2_rvegpbm)
+LLR
+
+# LR test
+LRteststat <- -2 * (as.numeric(LLR)-as.numeric(LLU))
+LRteststat
+
+LRpvalue <- pchisq(LRteststat, df = 1, lower.tail = FALSE)
+LRpvalue
+```
+
+With a 5% significance level, we would reject the null hypothesis. This means we should use the unrestricted model. This suggests that being vegetarian and having had PBM before does matter.
+
+## 7. Estimate log-likelihood function
+
+*Using the notes in lecture 10 write up the log-likelihood function for this case and estimate the parameters for the model with relprice and pbm and a constant as covariates. Compare the estimates of 7 with the canned function-based estimates. They should be the same.*
+
+```{r log-likelihood function}
+# Define the negative log likelihood function
+logl.logit <- function(theta,x,y){
+  n <- nrow(x)
+  y <- y
+  x <- as.matrix(x)
+  beta <- theta[1:ncol(x)]
+  # Use the log-likelihood of the logit
+  # where p is logit transformation of linear combination of predictors
+  loglik <- sum(y*log(exp(x%*%beta)/(1+exp(x%*%beta))) + (1-y)*log(1- exp(x%*%beta)/(1+exp(x%*%beta))))
+  return(-loglik)
+  }
+
+y6ML <- pbm_data$chosePBM
+X6ML <- cbind(1, pbm_data$relprice, pbm_data$pbm)
+
+#estimate giving starting values
+results6ML <- optim(c(-0.1,-0.1,-0.1),logl.logit,method="BFGS",hessian=T,x=X6ML,y=y6ML)
+
+out <- list(
+  beta=results6ML$par, vcov=solve(results6ML$hessian), ll=results6ML$value
+  )
+out
+
+# compare with canned one
+logit6ML <- glm(chosePBM~relprice+pbm, pbm_data, family=binomial(link="logit"))
+summary(logit6ML)
+```
+The estimates of $\beta$ are the same.
+
+## 8. Effect of having had PBM before
+
+*What is the marginal effect of having had pbm before on the probability of choosing PBM? What is the sample average of choosing PBM conditional of the sample that always chose one of the alternatives? What percentage of the mean is the estimated marginal effect? Answer: “Having had PBM before increases the probability of choosing PBM in the survey by XXX percent among those who choose one of the two alternatives” fill in the XXX based on the answer to the first questions in 8.*
+
+Assume that we use the same log-likelihood function used in Question 7.
+
+Note, we filtered for noChoice==0 in Question 1.
+
+```{r effect of having had PBM before}
+# marginal effect of having had PBM before
+marginsML <- margins(logit6ML)
+marginsML
+
+# sample average of chosing PBM
+avgchosePBM <- mean(pbm_data$chosePBM)
+avgchosePBM
+
+as.numeric(summary(marginsML)$AME[1])/avgchosePBM
+```
+Having had PBM before increases the probability of choosing PBM in the survey by 37.4 percent among those who choose one of the two alternatives.
+
+# Exercise 7: Simulation
+
