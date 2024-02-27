@@ -14,7 +14,7 @@ header-includes:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r set up}
+```{r load packages and get cwd}
 # Comment out after installing
 # install.packages("pacman")
 
@@ -141,11 +141,11 @@ From Lecture 9: Let $G$ be the matrix of first derivatives of $\beta$, $G(\beta)
 Delta method: $\sqrt{N}(g(b_N)-g(\beta)) \xrightarrow[]{\text{ d }} N(0, G(\beta)\sigma^2Q^{-1}G(\beta)')$
 
 ```{r estimate gamma}
-b2 <- b[[2]]
-b3 <- b[[3]]
-b4 <- b[[4]]
+b1_2 <- b1[[2]]
+b1_3 <- b1[[3]]
+b1_4 <- b1[[4]]
 
-G <- cbind(0, (b3+3*b4)/log(b2+2), log(b2+2), 3*log(b2+2) )
+G <- cbind(0, (b1_3+3*b1_4)/log(b1_2+2), log(b1_2+2), 3*log(b1_2+2) )
 Q <- (t(X1)%*%X1)/n1
 
 vbGammaOLS <- s2* G%*%solve(Q)%*%t(G)
@@ -243,10 +243,7 @@ $lprice_i = \alpha_0 + fuel_i \alpha_1 + year_i \alpha_2 + weight_i \alpha_3 +lu
 
 ```{r estimate lprice model with average_o1 using OLS}
 
-# TODO: Ask Sofia--use average_o1 or take log first? ####
-# Is average_o1 really an average of log prices? Based on the magnitude, seems like an average of prices.
-# Alternative: Should we be comparing average_o1 to log(pr) instead?
-# Log of average not exactly equal to average of logs but closer??
+# Take log of average_o1
 my_data$laverage_o1 <- log(my_data$average_o1)
 
 # declare X and y variables
@@ -346,9 +343,19 @@ The coefficient of `lprice` from 2SLS is the same as the `lprice` coefficient fr
 *Estimate the first-stage regression and, in the second stage, use logprice (not the predicted education values of the first-stage regression as above) and also include the residuals from the first stage in the second stage, following a control function approach.*
 
 ```{r control function approach}
+# first stage
+Z5_fs <- cbind(1, my_data$fuel, my_data$laverage_o1, my_data$year, my_data$weight, my_data$luxury)
+a_fs <- solve(t(Z5_fs) %*% Z5_fs) %*% t(Z5_fs) %*% my_data$lprice
+lpricehat <- Z5_fs %*% a_fs
 
-# TODO: attempt after Lecture 12 ####
+# get first stage residuals
+my_data$efs <- my_data$lprice - lpricehat
 
+# add control function
+#Xcf <- cbind(1, my_data$lprice, my_data$efs)
+Xcf <- cbind(1, my_data$fuel, my_data$lprice, my_data$efs, my_data$year, my_data$weight, my_data$luxury)
+b5_cf<-solve(t(Xcf) %*% Xcf) %*% t(Xcf) %*% y5
+b5_cf
 ```
 
 ## 4. Divide reduced-form regression coefficient by first-stage regression coefficient
@@ -357,7 +364,7 @@ The coefficient of `lprice` from 2SLS is the same as the `lprice` coefficient fr
 
 ```{r ratio of reduced-form coefficient and FS coefficient}
 # divide reduced-form regression coefficient by first-stage regression coefficient
-coefratio5 <- b4[[6]] / a_fs[[6]]
+coefratio5 <- b4[[6]] / a_fs[[3]]
 ```
 
 The ratio of the reduced-form regression coefficient and the first-stage regression coefficient is **`r coefratio5`**.
@@ -366,12 +373,15 @@ The ratio of the reduced-form regression coefficient and the first-stage regress
 
 *Confirm that the regression coefficients computed using the different IV strategies are basically equivalent, given that they all measure the same effect of logprice on log quantity in different instrumental variable fashions.*
 
-```{r ratio of reduced-form coefficient and FS coefficient}
+```{r compare regression coefficients}
 # compare IV and 2SLS coefficient
-round(b5_iv[[3]], 6) == round(b5_2sls[[6]], 6)
+round(b5_iv[[3]], 6) == round(b5_2sls[[3]], 6)
+
+# compare CF and 2SLS coefficient
+round(b5_cf[[3]], 6) == round(b5_2sls[[3]], 6)
 
 # compare ratio and 2SLS coefficient
-round(coefratio5, 6) == round(b5_2sls[[6]], 6)
+round(coefratio5, 6) == round(b5_2sls[[3]], 6)
 ```
 
 ## 6. Compare 2SLS to OLS
@@ -394,11 +404,45 @@ The standard errors for 2SLS coefficients are larger. This means that introducin
 
 *Given that we get efficiency gains with more instruments, you consider now using both logAverageOther1 and logAverageOther2 (two average prices over a different set of European countries) as instruments for logprice. How would you test the null of the validity of both instruments? Perform the Hausman test of overidentifying restrictions assuming homoskedastic disturbances.*
 
+From Lecture 12: If homoskedasticity then $N R^2 ~ \chi_{Q_1}^2$ where $Q_1 = L_2 - G_2$ and $R^2$ is the R squared of the
+regression of the 2SLS residuals on the instruments that is, of the regression $e_{2SLS} = Z \rho + u$
+
 ```{r multiple instruments and Hausman test}
+# Take log of average_o2
+my_data$laverage_o2 <- log(my_data$average_o2)
 
-# TODO: attempt after Lecture 12 ####
+#first stage
+Z5_fs <- cbind(1, my_data$fuel, my_data$laverage_o1, my_data$laverage_o2, my_data$year, my_data$weight, my_data$luxury)
+a_fs <- solve(t(Z5_fs) %*% Z5_fs) %*% t(Z5_fs) %*% my_data$lprice
+lpricehat <- Z5_fs %*% a_fs
 
+#second stage 2SLS
+X5_hat <- cbind(1, my_data$fuel, lpricehat, my_data$year, my_data$weight, my_data$luxury)
+
+#E[xhat epsilon_i]=0
+b5_2sls <- solve(t(X5_hat) %*% X5_hat) %*% t(X5_hat) %*% y5
+
+# compute 2SLS standard errors
+ehat <- y5 - X5%*%b5_2sls
+# NOT e = wage - Xhat*b2sls
+SSR <- t(ehat)%*%ehat
+# construct demeaner
+n <- length(y5)
+i <- c(rep(1,n))
+M0 <- diag(n)-i%*%t(i)*(1/n)
+# demeaned y
+M0y <- M0%*%y5
+# total sum of squares
+SST <- t(M0y)%*%M0y
+# calculate R squared
+Rsquared <- 1-(SSR/SST)
+Rsquared
+
+# Hausman test
+Hteststat <- pchisq(n*Rsquared, df=1, lower.tail=FALSE)
+Hteststat
 ```
+Since the R squared is **`r Rsquared`** and the p-value of the $\chi^2$ statistic for the Hausman test is **`r Hteststat`**, we reject the null hypothesis. Therefore, we conclude that including both `laverage_o1` and `laverage_o2` overidentifies the number of restrictions.
 
 # Exercise 6: Limited Dependent Variable
 
