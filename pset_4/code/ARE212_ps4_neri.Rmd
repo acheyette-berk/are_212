@@ -375,3 +375,11 @@ summary(logit_canned)
 
 ## Exercise 7 – Simulation
 
+```{r, message = FALSE, warning = FALSE, results = 'asis'}
+
+
+x <- rnorm(n = 100, mean = 1, sd=1)
+
+
+```
+
