@@ -503,5 +503,59 @@ list(
 ```
 
 The treat variable has a p-value of `r p_value_treat`, which is not statistically significant, so we fail to reject the null hypothesis that the treatment does not have an effect on the outcome of choosing plant-based meat. The vegetarian coeeficient has a p-value of `r p_value_vegetarian`, which is also not statistically significant. The pbm variable has a p-value of `r p_value_pbm`, which is significant at the 1% confidence level. 
+## 7. 
 
-*This is what I have done as of 8:30 am on Thursday, will try to complete the rest by when we meet later today :) *
+```{r}
+
+# define the negative log likelihood function
+logl.logit <- function(theta, x, y){
+  
+  n <- nrow(x)
+  x = as.matrix(x)
+  
+  beta <- theta[1:ncol(x)]
+  
+  loglik <- 
+    sum(y * log(exp(x %*% beta) / (1 + exp(x %*% beta))) + 
+    (1 - y) * log(1 - exp(x %*% beta) / (1 + exp(x %*% beta))))
+  
+  return(-loglik)
+  
+}
+
+yW <- pbm$chosePBM
+xW <- cbind(1, pbm$relprice, pbm$pbm)
+
+resultsML <- optim(c(0,0,0), logl.logit, method = "BFGS", hessian = T,
+                   x = xW, y = yW)
+
+out <- list(beta = resultsML$par,
+            vcov = solve(resultsML$hessian),
+            ll = 2*resultsML$value)
+out
+(se <- sqrt(diag(out$vcov)))
+
+# compare with canned functions
+logit_ML <- glm(chosePBM ~ relprice + pbm, pbm, 
+                    family = binomial(link = "logit"))
+summary(logit_ML)
+
+```
+The results are the same between the canned and the custom log-likelihood functions.
+
+
+## 8. 
+
+```{r}
+# marginal effect
+(marginsML <- margins(logit_ML))
+
+# sample average of choosing PBM
+(avg_pbm <- mean(pbm$chosePBM))
+
+# What percentage of the mean is the estimated marginal effect?
+(percent_me <- summary(marginsML)$AME[["pbm"]]/avg_pbm * 100)
+
+```
+
+Having had PBM before increases the probability of choosing PBM in the survey by `r percent_me`%  among those who choose one of the two alternatives.
