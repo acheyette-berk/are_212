@@ -1,0 +1,198 @@
+---
+title: "ps4_Aline"
+author: "hellooooo"
+date: "2024-02-29"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+library(pacman)
+p_load(dplyr, haven, readr, knitr, psych, ggplot2,stats4, stargazer, lmSupport, magrittr, qwraps2, Jmisc , fastDummies)
+```
+
+## Exercise 1
+
+### Q1. Estimate the model via ols
+
+
+```{r}
+my_data <- read_dta("/Users/alineabayo/Desktop/ARE_212/Problem\ Set\ 4/pset4_2024.dta")
+my_data$lprice <- log(my_data$price)
+my_data$lqu <- log(my_data$qu)
+x1 <- cbind(1, my_data$fuel, my_data$lprice, my_data$weight)
+y1 <- my_data$lqu
+n1 <- length(y1)
+Df<- nrow(x1)-ncol(x1)
+#coefficients
+b1 <- solve(t(x1) %*% x1) %*% t(x1) %*% y1
+b1
+# projection matrix of reg y on X
+P <- x1%*%solve(t(x1)%*%x1)%*%t(x1)
+#Residuals
+M <- diag(n1)-P
+e <- M%*%y1
+#Standard error
+s1 <- as.numeric(t(e)%*%e)/Df
+vb <- s1*solve(t(x1)%*%x1)
+se <- sqrt(diag(vb))
+se
+```
+
+#### Q2. BP Test
+
+```{r}
+reg_lqu <- lm(y1~x1)
+#bptest(reg_lqu)
+```
+Yes, we do have heteroskedasticity
+
+#### Q3. White robust standard errors.
+
+```{r}
+#inv(X'X) (\sum Xi' ei ei Xi) inv(X'X)
+#inv(X'X) (\sum Xei Xei') inv(X'X)
+Xe<-cbind(e,my_data$fuel*e,my_data$lprice*e, my_data$weight*e)
+
+Vb_whiteRobust<-solve(t(x1) %*% x1) %*% t(Xe) %*%  Xe %*% solve(t(x1) %*% x1)  
+Vb_whiteRobust
+
+seb_whiteRobust<-sqrt(diag(Vb_whiteRobust))
+seb_whiteRobust
+se
+
+```
+Yes, white se is the appropriate way to solve heteroskedaskicity
+
+#### Q3. gamma hat
+
+```{r}
+#gamma=
+beta2_hat<- b1[[2]]
+beta3_hat<- b1[[3]]
+beta4_hat<- b1[[4]]
+gamma_hat <- log(beta2_hat + 2) * (beta3_hat + 3 * beta4_hat)
+gamma_hat
+
+```
+
+### Exercise 2
+
+```{r}
+x2 <- cbind(1, my_data$fuel, my_data$lprice, my_data$year, my_data$weight, my_data$luxury)
+y2 <- my_data$lqu
+n2 <- length(y2)
+df2<- nrow(x2)-ncol(x2)
+#coefficients
+b2 <- solve(t(x2) %*% x2) %*% t(x2) %*% y2
+b2
+# projection matrix of reg y on X
+P2 <- x2%*%solve(t(x2)%*%x2)%*%t(x2)
+#Residuals
+M2 <- diag(n2)-P2
+e2 <- M%*%y2
+#Standard error
+s2 <- as.numeric(t(e2)%*%e2)/df2
+vb2 <- s1*solve(t(x2)%*%x2)
+se2 <- sqrt(diag(vb2))
+se2
+```
+100% increase in quantity results in 144.18% decrease in price,holding all other factors constant.
+
+#### Omitted Variable Bias
+
+Performance and Features: Cars with better performance metrics (such as acceleration, power) and advanced features (like autonomous driving capabilities, high-end entertainment systems) are generally priced higher. These features enhance the desirability and decisions to buy a car
+ 
+Omitting variables that are correlated with both the dependent variablea and the independent variables (e.g., log price) can lead to omitted variable bias. This bias occurs because the OLS assume that all other variables are held constant, including those not included in the model. If the omitted variables are correlated with both the price and the quantity demanded, their effects are attributed to the variables included in the model, distorting the estimated coefficient of log price. In this case, we might overestimate the true impact of lprice on lqu. 
+
+#### If we omit fuel from equation (eq.2) how does your OLS estimate of the log price change?
+
+```{r}
+cor1<- cor(my_data$lprice,my_data$fuel)
+cor1
+x3 <- cbind(1,my_data$lprice, my_data$year, my_data$weight, my_data$luxury)
+y3 <- my_data$lqu
+ols_sans_fuel<- lm(y3~x3)
+summary(ols_sans_fuel)
+```
+
+### Exercise 3
+
+```{r}
+
+my_data$laverage_o1 <- log(my_data$average_o1)
+
+x3 <- cbind(1,my_data$fuel, my_data$year, my_data$weight, my_data$luxury, my_data$laverage_o1)
+y3 <- my_data$lprice
+b3 <- solve(t(x3) %*% x3) %*% t(x3) %*% y3
+b3[[6]]
+```
+
+100% increase in price leads to 77.2% increase in this this specific country, controlling for other factors.
+
+### Exercise 4
+
+```{r}
+x4 <- cbind(1,my_data$fuel, my_data$year, my_data$weight, my_data$luxury, my_data$laverage_o1)
+y4 <- my_data$lqu
+b4 <- solve(t(x4) %*% x4) %*% t(x4) %*% y4
+b4
+```
+
+### Exercise 5
+
+#### a)
+```{r}
+x5 <- cbind(1,my_data$fuel, my_data$year, my_data$weight, my_data$luxury, my_data$lprice)
+y5 <- my_data$lqu
+z5 <- cbind(1,my_data$fuel, my_data$year, my_data$weight, my_data$luxury, my_data$laverage_o1)
+b5 <- solve(t(z5) %*% x5) %*% t(z5) %*% y5
+b5
+```
+100% increase in lprice leads to 120.1% decrease in lqu
+
+#### b)2SLS
+
+```{r}
+#first stage
+y6 <- my_data$lqu
+z6 <- cbind(1,my_data$fuel, my_data$year, my_data$weight, my_data$luxury, my_data$laverage_o1)
+a6<- solve(t(z6) %*% z6) %*% t(z6) %*% my_data$lprice
+my_data$lpricecoef <- z6 %*% a6
+#2nd stage
+z7 <- cbind(1,my_data$fuel, my_data$year, my_data$weight, my_data$luxury, my_data$lpricecoef)
+b7 <- solve(t(z7) %*% z7) %*% t(z7) %*% y6
+b7
+```
+100% increase in lprice leads to 120.1% decrease in lqu
+
+#### c)
+```{r}
+my_data$first_stageresid <- my_data$lprice-my_data$lpricecoef
+z8 <- cbind(1,my_data$fuel, my_data$year, my_data$weight, my_data$luxury, my_data$lprice, my_data$first_stageresid)
+b8 <- solve(t(z8) %*% z8) %*% t(z8) %*% y6
+b8
+```
+
+### EXERCISE 6
+
+```{r}
+my_data2<- read_dta("/Users/alineabayo/Desktop/ARE_212/Problem\ Set\ 4/pset4_PBM_2024.dta")
+# Filtering the data
+data_filt <- my_data2 %>%
+  filter(noChoice == 0, !is.na(chosePBM), !is.na(yourage), !is.na(treat), !is.na(relprice))
+# Ensure you have 262 observations
+print(nrow(df_filtered))
+```
+
+
+```{r}
+
+lpm_model <- lm(chosePBM ~ yourage + treat + relprice, data = my_data2)
+summary(lpm_model)
+
+```
+
