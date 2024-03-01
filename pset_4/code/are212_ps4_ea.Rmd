@@ -63,6 +63,8 @@ n1 <- length(y1)
 df <- nrow(X1) - ncol(X1)
 # Find coefficient vector
 b1 <- solve(t(X1) %*% X1) %*% t(X1) %*% y1
+b1
+
 # projection matrix of reg y on X
 P <- X1%*%solve(t(X1)%*%X1)%*%t(X1)
 # residual maker of reg y on X: M= I - P
@@ -145,15 +147,14 @@ b1_2 <- b1[[2]]
 b1_3 <- b1[[3]]
 b1_4 <- b1[[4]]
 
-G <- cbind(0, (b1_3+3*b1_4)/log(b1_2+2), log(b1_2+2), 3*log(b1_2+2) )
-Q <- (t(X1)%*%X1)/n1
+# Delta method white robust
+# gradient relative to beta0 is 0
+G <- cbind(0, (b1_3+3*b1_4)/(b1_2+2), log(b1_2+2), 3*log(b1_2+2) )
+Vgwhite <- G %*% Vb_whiteRobust %*% t(G)
 
-vbGammaOLS <- s2* G%*%solve(Q)%*%t(G)
-seGammaOLS <- sqrt(diag(vbGammaOLS))
-seGammaOLS
-
-# TODO: How to estimate White standard error for gamma??? ####
-
+# Delta method White robust standard errors
+segwhite <- sqrt(diag(Vgwhite))
+segwhite
 ```
 
 # Exercise 2
@@ -189,7 +190,7 @@ vb <- s2*solve(t(X2)%*%X2)
 # std error of b
 se2 <- sqrt(diag(vb))
 ```
-The `lprice` coefficient from OLS is **`r b2[[3]]`**. This means that for every 100% increase in `price`, `qu` will decrease by about 144%.
+The `lprice` coefficient from OLS is **`r b2[[3]]`**. This means that for every 100% increase in `price`, `qu` will decrease by about 144%. This is the price elasticity of demand.
 
 ```{r create price-qu scatterplot}
 # create price-qu scatterplot
@@ -284,10 +285,9 @@ The coefficient of `laverage_o1` in the reduced form model of `lqu` is **`r b4[[
 
 *Estimate equation (eq. 1 or 2???) by instrumental Variables using the variable LogAverageOther1 as an instrument for logprice. Please interpret the IV estimate of the logprice coefficient.*
 
+***NOTE: Problem set instructions said use eq.1 but this appeared to be a typo. We have used eq.1 for all parts of Exercise 5.***
+
 ```{r estimate Equation 2 by IV}
-
-# TODO: Ask Sofia, estimate eq.1 or eq.2? ####
-
 # define variables X and y and instrument Z
 X5 <- cbind(
   1, my_data$fuel, my_data$lprice, my_data$year, my_data$weight, my_data$luxury)
@@ -338,8 +338,11 @@ ehat <- y5 - X5%*%b5_2sls
 # NOT e = wage - Xhat*b2sls
 df5 <- nrow(X5) - ncol(X5)
 S2_2sls <- as.numeric(t(ehat)%*%ehat)/df5
+
 V_2sls <- solve(t(X5_hat)%*%X5_hat)*S2_2sls
+
 se5_2sls <- sqrt(diag(V_2sls))
+se5_2sls
 ```
 The coefficient of `lprice` from 2SLS is the same as the `lprice` coefficient from IV, **`r b5_2sls[[3]]`**.
 
@@ -413,8 +416,7 @@ The standard errors for 2SLS coefficients are larger. This means that introducin
 
 *Given that we get efficiency gains with more instruments, you consider now using both logAverageOther1 and logAverageOther2 (two average prices over a different set of European countries) as instruments for logprice. How would you test the null of the validity of both instruments? Perform the Hausman test of overidentifying restrictions assuming homoskedastic disturbances.*
 
-From Lecture 12: If homoskedasticity then $N R^2 ~ \chi_{Q_1}^2$ where $Q_1 = L_2 - G_2$ and $R^2$ is the R squared of the
-regression of the 2SLS residuals on the instruments that is, of the regression $e_{2SLS} = Z \rho + u$
+From Lecture 12: If homoskedasticity then $N R^2$ ~ $\chi_{Q_1}^2$ where $Q_1 = L_2 - G_2$ and $R^2$ is the R squared of the regression of the 2SLS residuals on the instruments that is, of the regression $e_{2SLS} = Z \rho + u$
 
 ```{r multiple instruments and Hausman test}
 # Take log of average_o2
@@ -601,6 +603,9 @@ Alternative hypothesis: You should use the unrestricted model.
 
 
 ```{r likelihood test for treatment}
+
+# TODO: Look up where LLR-LLU appears in Sofia's code ####
+
 # create model where treatment restricted
 logit2_rtreat <- glm(
   chosePBM~yourage+relprice+vegpbm, pbm_data, family=binomial(link="logit"))
