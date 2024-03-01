@@ -156,7 +156,32 @@ se_yum
 ### 1.c) Suppose that there is a model where a structural parameter of interest Y is defined as
 $$\text{Y}_i=log(\beta_2+2)(\beta_3+3\beta_4)$$
 ### Using the OLS estimation results from eq. 1, calculate Y and its white standard error (hint: think Delta Method).
-### Pending
+
+```{r, message = FALSE, warning = FALSE, results = 'asis'}
+re1 <- lm(logquantity~fuel+logprice+weight, data)
+
+beta_1=reg1$beta_hat[1]
+beta_2=reg1$beta_hat[2]
+beta_3=reg1$beta_hat[3]
+beta_4=reg1$beta_hat[4]
+
+SE_beta1=sqrt(diag(vcov(re1)))[1]
+SE_beta2=sqrt(diag(vcov(re1)))[2]
+SE_beta3=sqrt(diag(vcov(re1)))[3]
+SE_beta4=sqrt(diag(vcov(re1)))[4]
+
+parderiV_beta2 <- ((beta_3+3*beta_4)/(beta_2+2))
+parderiV_beta3 <- log(beta_2+2)
+parderiV_beta4 <- 3*log(beta_2+2)
+
+y=log(beta_2+2)*(beta_3+3*beta_4)
+SE_y = sqrt( (parderiV_beta2*SE_beta2)^2 + (parderiV_beta3*SE_beta3)^2 + (parderiV_beta4*SE_beta4)^2 )
+
+y
+SE_y
+
+```
+
 
 ## Exercise 2. 
 $$\text{Equation 2}$$
@@ -254,6 +279,7 @@ print(coef_m, round(3))
 ##5.7 Given that we get efficiency gains with more instruments, you consider now using both logAverageOther1 and logAverageOther2 (two average prices over a different set of European countries) as instruments for logprice. How would you test the null of the validity of both instruments? Perform the Hausman test of overidentifying restrictions assuming homoskedastic disturbances
 
 ```{r, message = FALSE, warning = FALSE, results = 'asis'}
+#Lecture 12
 reg551<-b_ols(data = data, y = "logprice", X = c("fuel", "logaverage_o1","logaverage_o2","year","weight","luxury"))
 data$Yhat551=reg551$Y_hat
 
@@ -373,13 +399,66 @@ summary(logit_canned)
 
 
 
-## Exercise 7 – Simulation
+## Exercise 7 – Simulation. Let the linear model be given by
+$$\text{y}_i=\beta_0+\beta_1*\text{x}_i+\epsilon_i$$
 
 ```{r, message = FALSE, warning = FALSE, results = 'asis'}
+BiasSimulator <- function(simulationSize, sampleSize, trueBeta) {
+  
+   OLSBiasGenerator <- function(sampleSize, trueBeta) {
+
+    #trueBeta <- c(1 , 5, 9)
+    x <- rnorm(n = sampleSize, mean = 0, sd=1)
+    e <- rnorm(n = sampleSize, mean = 0, sd=3)
+    y <- trueBeta[1] + trueBeta[2] * x + e
+    X <- cbind(1, x)
+    y <- matrix(y, ncol = 1) # Force y to be a matrix
+    
+    # Calculate the OLS estimates
+    b.ols <- solve(t(X) %*% X) %*% t(X) %*% y
+    b.ols %>% as.vector()
+    e_hat <- y - X%*%b.ols 
+    sigma_hat <- (t(e_hat) %*% e_hat)/sampleSize
+    
+    biasBeta <- (sigma_hat-trueBeta[3]) %>% matrix(ncol = 1) %>%  data.frame()
+      # Set names
+   #names(biasBeta) <- c("interceptBias", "regressorBias")
+      # Return the bias
+    return(biasBeta)  
+  }
+    # Run OLSBiasGenerator simulationSize times with given parameters
+    simulation.dt <- lapply(
+      X = 1:simulationSize,
+      FUN = function(i) OLSBiasGenerator(sampleSize, trueBeta)) %>%
+      # Bind the rows together to output a nice data.frame
+      bind_rows()
+    
+    # Return simulation.dt
+    return(simulation.dt)
+    #simulation dt is a Simulationsize by number of true parametres matrix
+  }
+
+set.seed(1234)
+sim.dt100 <- BiasSimulator(simulationSize = 1e4, sampleSize = 100, trueBeta = c(1 , 5, 9))
+sim.dt1000 <- BiasSimulator(simulationSize = 1e4, sampleSize = 1000, trueBeta = c(1 , 5, 9))
+sim.dt10000 <- BiasSimulator(simulationSize = 1e4, sampleSize = 10000, trueBeta = c(1 , 5, 9))
+
+hist(sim.dt100[,1], breaks = 300, main = "OLS  b unbiasedness of slope coefficient- sample size 100",
+       xlab = "Bias")
+abline(v = 0, col = "green", lwd = 6)
 
 
-x <- rnorm(n = 100, mean = 1, sd=1)
+hist(sim.dt1000[,1], breaks = 300, main = "OLS  b unbiasedness of slope coefficient- sample size 1000",
+       xlab = "Bias")
+abline(v = 0, col = "green", lwd = 6)
 
+hist(sim.dt10000[,1], breaks = 300, main = "OLS  b unbiasedness of slope coefficient- sample size 1000",
+       xlab = "Bias")
+abline(v = 0, col = "green", lwd = 6)
 
 ```
+
+      
+      
+      
 
