@@ -142,10 +142,14 @@ From Lecture 9: Let $G$ be the matrix of first derivatives of $\beta$, $G(\beta)
 
 Delta method: $\sqrt{N}(g(b_N)-g(\beta)) \xrightarrow[]{\text{ d }} N(0, G(\beta)\sigma^2Q^{-1}G(\beta)')$
 
-```{r estimate gamma}
+```{r estimate gamma-hat and white standard error}
 b1_2 <- b1[[2]]
 b1_3 <- b1[[3]]
 b1_4 <- b1[[4]]
+
+# gamma hat
+gammahat <- log(b1_2 + 2)*(b1_3 + 3*b1_4)
+gammahat
 
 # Delta method white robust
 # gradient relative to beta0 is 0
