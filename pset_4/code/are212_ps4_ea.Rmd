@@ -623,10 +623,11 @@ LLR
 LRteststat <- -2 * (as.numeric(LLR)-as.numeric(LLU))
 LRteststat
 
+# df = 5 - 4 = 1
 LRpvalue <- pchisq(LRteststat, df = 1, lower.tail = FALSE)
 LRpvalue
 ```
-With a 5% significance level, we would reject the null hypothesis. This means we should use the unrestricted model. This suggests that treatment does matter. 
+With a 1% significance level, we would reject the null hypothesis. This means we should use the unrestricted model. This suggests that treatment does matter. 
 
 *Then test the null of whether being vegetarian and having had PBM before does not matter in explaining the probability of choosing PBM.*
 
@@ -648,11 +649,12 @@ LLR
 LRteststat <- -2 * (as.numeric(LLR)-as.numeric(LLU))
 LRteststat
 
+# df = 5 - 4 = 1
 LRpvalue <- pchisq(LRteststat, df = 1, lower.tail = FALSE)
 LRpvalue
 ```
 
-With a 5% significance level, we would reject the null hypothesis. This means we should use the unrestricted model. This suggests that being vegetarian and having had PBM before does matter.
+With a 1% significance level, we would reject the null hypothesis. This means we should use the unrestricted model. This suggests that being vegetarian and having had PBM before does matter.
 
 ## 7. Estimate log-likelihood function
 
