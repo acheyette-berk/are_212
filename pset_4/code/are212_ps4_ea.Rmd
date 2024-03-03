@@ -289,7 +289,7 @@ The coefficient of `laverage_o1` in the reduced form model of `lqu` is **`r b4[[
 
 *Estimate equation (eq. 1 or 2???) by instrumental Variables using the variable LogAverageOther1 as an instrument for logprice. Please interpret the IV estimate of the logprice coefficient.*
 
-***NOTE: Problem set instructions said use eq.1 but this appeared to be a typo. We have used eq.1 for all parts of Exercise 5.***
+***NOTE: Problem set instructions said use eq.1 but this appeared to be a typo. We have used eq.2 for all parts of Exercise 5.***
 
 ```{r estimate Equation 2 by IV}
 # define variables X and y and instrument Z
@@ -508,9 +508,9 @@ ggplot(pbm_data, aes(x = yourage, y = chosePBM_lmfit)) +
   # First add points, color determined by whether in or out of [0,1]
   geom_point() + # add points
   # add horizontal line at y=0
-  geom_hline(yintercept=0, size = 1.4, alpha = 0.35, color = "red") + 
+  geom_hline(yintercept=0, linewidth = 1.4, alpha = 0.35, color = "red") + 
   # add horizontal line at y=1
-  geom_hline(yintercept=1, size = 1.4, alpha = 0.35, color = "red") + 
+  geom_hline(yintercept=1, linewidth = 1.4, alpha = 0.35, color = "red") + 
   # generate labels
   labs(title = "Predicted Probability of Choosing Plant-Based Meat (PBM) vs. Respondent Age",
        subtitle = "Linear Probability (OLS) Model",
@@ -539,9 +539,9 @@ ggplot(pbm_data, aes(x = yourage, y = chosePBM_logfit)) +
   # First add points, color determined by whether in or out of [0,1]
   geom_point() + # add points
   # add horizontal line at y=0
-  geom_hline(yintercept=0, size = 1.4, alpha = 0.35, color = "red") + 
+  geom_hline(yintercept=0, linewidth = 1.4, alpha = 0.35, color = "red") + 
   # add horizontal line at y=1
-  geom_hline(yintercept=1, size = 1.4, alpha = 0.35, color = "red") + 
+  geom_hline(yintercept=1, linewidth = 1.4, alpha = 0.35, color = "red") + 
   # generate labels
   labs(title = "Predicted Probability of Choosing Plant-Based Meat (PBM) vs. Respondent Age",
        subtitle = "Logit Model",
@@ -767,9 +767,12 @@ VarBiasSimulator <- function(simulationSize, sampleSize, trueTheta) {
 set.seed(12345)
 
 # Run simulations
-sim.dt100 <- VarBiasSimulator(simulationSize = 1e4, sampleSize = 100, trueTheta = c(1, 5, 9))
-sim.dt1000 <- VarBiasSimulator(simulationSize = 1e4, sampleSize = 1000, trueTheta = c(1, 5, 9))
-sim.dt10000 <- VarBiasSimulator(simulationSize = 1e4, sampleSize = 10000, trueTheta = c(1, 5, 9))
+sim.dt100 <- VarBiasSimulator(simulationSize = 1e4, sampleSize = 100, 
+                              trueTheta = c(1, 5, 9))
+sim.dt1000 <- VarBiasSimulator(simulationSize = 1e4, sampleSize = 1000, 
+                               trueTheta = c(1, 5, 9))
+sim.dt10000 <- VarBiasSimulator(simulationSize = 1e4, sampleSize = 10000, 
+                                trueTheta = c(1, 5, 9))
 
 # Plot histogram of variance bias for sample size = 100
 hist(sim.dt100[,1], breaks=50,

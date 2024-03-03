@@ -623,8 +623,25 @@ BiasSimulator <- function(simulationSize, sampleSize, trueBeta) {
       y <- matrix(y, ncol = 1)
       # Calculate the OLS estimates
       b.ols <- solve(t(X) %*% X) %*% t(X) %*% y
-      # Convert b_ols to vector
-      b.ols <- b.ols %>% as.vector()
+      # # Convert b_ols to vector
+      # b.ols <- b.ols %>% as.vector()
+      
+      # Calculate residuals 
+      ehat <- y - X %*% b.ols
+      
+      # Calculate variance of residuals (S2)
+      n <- nrow(X)  # Number of observations
+      k <- ncol(X)  # Number of parameters estimated (including intercept)
+      S2 <- as.numeric((t(ehat) %*% ehat) / (n - k))
+      
+      # Calculate the variance-covariance matrix (V) of the 2SLS regression
+      # coefficients
+      V <- solve(t(X) %*% X) * S2
+      
+      # Calculate standard errors (se) of the coefficients
+      se <- sqrt(diag(V))
+
+
       # Calculate bias, force to 2x1 data.frame()
       #in pset 
       #sigma2bias<-true sigma-sigmahat2
