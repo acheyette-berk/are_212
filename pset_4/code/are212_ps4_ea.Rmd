@@ -22,10 +22,10 @@ options(scipen = 999)
 
 # Load packages
 library(pacman)
-p_load(dplyr,haven, readr, knitr, readxl, psych, ggplot2, stats4)
+p_load(dplyr, haven, readr, knitr, readxl, psych, ggplot2, stats4)
 #p_load(lmSupport, magrittr, qwraps2, car, lmtest, stargazer,sandwich)
 # Remove lmSupport, add tidyverse and dplyr and margins
-p_load(magrittr, qwraps2, car, lmtest, stargazer,sandwich, tidyverse, dplyr, margins)
+p_load(magrittr, qwraps2, car, lmtest, stargazer,sandwich, tidyverse, margins)
 
 # get directory of current file
 current_directory <-
@@ -194,7 +194,7 @@ vb <- s2*solve(t(X2)%*%X2)
 # std error of b
 se2 <- sqrt(diag(vb))
 ```
-The `lprice` coefficient from OLS is **`r b2[[3]]`**. This means that for every 100% increase in `price`, `qu` will decrease by about 144%. This is the price elasticity of demand.
+The `lprice` coefficient from OLS is **`r b2[[3]]`**. This means that for every 1% increase in `price`, `qu` will decrease by about 1.44%. This is the price elasticity of demand.
 
 ```{r create price-qu scatterplot}
 # create price-qu scatterplot
@@ -260,7 +260,7 @@ b3 <- solve(t(X3) %*% X3) %*% t(X3) %*% y3
 b3
 ```
 
-The coefficient of `laverage_o1` is **`r b3[[6]]`**. This means that controlling for the other specified variables, `lprice` in this country will increase by about 77% when the average of prices in other countries increase by 100%.
+The coefficient of `laverage_o1` is **`r b3[[6]]`**. This means that controlling for the other specified variables, `lprice` in this country will increase by about 0.77% when the average of prices in other countries increase by 1%.
 
 # Exercise 4
 
@@ -305,7 +305,7 @@ b5_iv <- solve(t(Z5) %*% X5) %*% t(Z5) %*% y5
 b5_iv
 ```
 
-Using `laverage_o1` as an instrumental variable, the coefficient of `lprice` is estimated to be **`r b5_iv[[3]]`**. This means that after correcting for omitted variables, `lqu` decreases by about 120% when `lprice` increases by 100%. This is smaller in magnitude than the OLS estimate because the IV applies a correction to address omitted variable bias.
+Using `laverage_o1` as an instrumental variable, the coefficient of `lprice` is estimated to be **`r b5_iv[[3]]`**. This means that after correcting for omitted variables, `lqu` decreases by about 1.2% when `lprice` increases by 1%. This is smaller in magnitude than the OLS estimate because the IV applies a correction to address omitted variable bias.
 
 ## 2. 2SLS
 
@@ -607,8 +607,6 @@ Alternative hypothesis: You should use the unrestricted model.
 
 
 ```{r likelihood test for treatment}
-
-# TODO: Look up where LLR-LLU appears in Sofia's code ####
 
 # create model where treatment restricted
 logit2_rtreat <- glm(
